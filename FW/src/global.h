@@ -4,14 +4,9 @@
 #include "defines.h"
 
 /**< List of global variables */
-uint8_t GLOBAL_mode;
-int16_t GLOBAL_TargetPos;
-int16_t GLOBAL_RealPos;
-uint16_t GLOBAL_MagnetValue;
-uint8_t GLOBAL_Power;
-uint32_t GLOBAL_WorkingTime;
-volatile bool GLOBAL_GotNMI;
-uint16_t GLOBAL_ValATA6832;
+uint32_t GLOBAL_Baudrate;
+uint8_t  GLOBAL_ConnMode;
+float GLOBAL_PeakCurrent;
 
 /**< EEPROM variables with default values */
 uint8_t  EE_Id;
@@ -43,12 +38,6 @@ uint16_t EE_Mag_full;
 uint16_t EE_CO_FB_Voltage;
 uint16_t EE_FT_FB_Voltage;
 char     EE_Name[SERVO_NAME_LEN];
-
-/**< Tasks IDs */
-TaskHandle_t taskHall;
-
-/**< Semaphores for RTOS */
-SemaphoreHandle_t xSemaphoreEEPROM;
-SemaphoreHandle_t xSemaphoreSPI;
+int16_t  EE_CurrOffset;
 
 #endif

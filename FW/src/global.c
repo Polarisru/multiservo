@@ -1,15 +1,9 @@
 #include "global.h"
 
 /**< List of global variables */
-uint8_t GLOBAL_Mode;
-int16_t GLOBAL_TargetPos;
-int16_t GLOBAL_RealPos;
-uint16_t GLOBAL_MagnetValue;
-uint8_t GLOBAL_Power;
-uint32_t GLOBAL_WorkingTime;
-uint16_t GLOBAL_ValATA6832;
-
-volatile bool GLOBAL_GotNMI;
+uint32_t GLOBAL_Baudrate;
+uint8_t  GLOBAL_ConnMode;
+float GLOBAL_PeakCurrent;
 
 /**< EEPROM variables with default values */
 uint8_t  EE_Id          = 0x01;     // Id of the servo
@@ -41,10 +35,4 @@ uint16_t EE_Mag_full    = 2500;     // magnet position @ 2000uS
 uint16_t EE_CO_FB_Voltage = 0;      // Feedback voltage at cut-off position
 uint16_t EE_FT_FB_Voltage = 0xfff;  // Feedback voltage at full-throttle position
 char     EE_Name[SERVO_NAME_LEN];
-
-/**< Tasks IDs */
-TaskHandle_t taskHall;
-
-/**< Semaphores for RTOS */
-SemaphoreHandle_t xSemaphoreEEPROM;
-SemaphoreHandle_t xSemaphoreSPI;
+int16_t  EE_CurrOffset;

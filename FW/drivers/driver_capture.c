@@ -99,7 +99,7 @@
 // <0x60=>TC7 match/capture 1
 
 #define CAPTURE_TIMER_PRESCALER  TC_CTRLA_PRESCALER_DIV8_Val
-#define CAPTURE_TIMER_DIVIDER    (CONF_GCLK_TC0_FREQUENCY / 8 / 1000000UL)
+#define CAPTURE_TIMER_DIVIDER    (CONF_CPU_FREQUENCY / 8 / 1000000UL)
 
 volatile uint32_t pulse_width, period;
 

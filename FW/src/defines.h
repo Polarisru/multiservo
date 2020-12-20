@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <limits.h>
 #include "samc21e18a.h"
-#include "peripheral_clk_config.h"
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
@@ -31,13 +30,31 @@
 //#define HALL_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 #define INIT_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 
-enum COMM_TYPE
+#define CHAR_CR 	              '\r'
+#define CHAR_NL		              '\n'
+#define CHAR_ESC 	              0x1B
+#define CHAR_BSPACE             0x08
+#define LINE_CRLF               "\n"
+#define LINE_SEPARATE           " - "
+
+enum CONN_MODE
 {
-  COMM_TYPE_PWM,
-  COMM_TYPE_RS485,
-  COMM_TYPE_CAN,
-  COMM_TYPE_LAST
+  CONN_MODE_PWM,
+  CONN_MODE_RS485,
+  CONN_MODE_CAN,
+  CONN_MODE_UAVCAN,
+  CONN_MODE_SBUS,
+  CONN_MODE_LAST
 };
+
+enum {
+  ADC_TYPE_CURRENT,
+  ADC_TYPE_MAX,
+  ADC_TYPE_LAST
+};
+
+#define UPD_PASSWORD            1234
+#define PASSWORD_SECURED        1234
 
 /**< Maximal value for device ID on CAN bus */
 #define MAX_ID_VALUE            0x1f

@@ -283,11 +283,13 @@ void CAN_Init(Can *channel)
     MCLK->AHBMASK.reg |= MCLK_AHBMASK_CAN0;
     GCLK->PCHCTRL[CAN0_GCLK_ID].reg = CAN_GCLK_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos);
   } else
+  #ifdef CAN1
   if (channel == CAN1)
   {
     MCLK->AHBMASK.reg |= MCLK_AHBMASK_CAN1;
     GCLK->PCHCTRL[CAN1_GCLK_ID].reg = CAN_GCLK_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos);
   } else
+  #endif
   {
     /**< Non-available CAN connection */
     return;

@@ -3,6 +3,7 @@
 
 #include "defines.h"
 
+void RS485_SetBaudrate(uint32_t baudrate);
 void RS485_Init(void);
 void RS485_SwitchTermination(bool on);
 void RS485_SendPacket(uint8_t *data, uint8_t len);

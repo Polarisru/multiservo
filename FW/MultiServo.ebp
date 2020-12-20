@@ -87,7 +87,6 @@
 		<Unit filename="CMSIS\core_cm0plus.h" />
 		<Unit filename="config\FreeRTOSConfig.h" />
 		<Unit filename="config\hpl_can_config.h" />
-		<Unit filename="config\peripheral_clk_config.h" />
 		<Unit filename="drivers\driver_adc.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -282,11 +281,24 @@
 		<Unit filename="include\sam.h" />
 		<Unit filename="include\samc21.h" />
 		<Unit filename="include\system_samc21.h" />
+		<Unit filename="src\actions.h" />
+		<Unit filename="src\adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\adc.h" />
+		<Unit filename="src\bootloader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\bootloader.h" />
 		<Unit filename="src\canbus.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\canbus.h" />
 		<Unit filename="src\cmd_set.h" />
+		<Unit filename="src\conversion.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\conversion.h" />
 		<Unit filename="src\crc16.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -307,6 +319,18 @@
 		<Unit filename="src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src\outputs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\outputs.h" />
+		<Unit filename="src\parser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\parser.h" />
+		<Unit filename="src\rs232.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\rs232.h" />
 		<Unit filename="src\rs485.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -316,10 +340,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\sbus.h" />
-		<Unit filename="src\uavcan.c">
+		<Unit filename="src\uavcan.h" />
+		<Unit filename="src\utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\uavcan.h" />
+		<Unit filename="src\utils.h" />
+		<Unit filename="src\version.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\version.h" />
 		<Unit filename="sys\samc21e18a_flash.ld" />
 		<Unit filename="sys\samc21e18a_flash_boot.ld">
 			<Option target="Release" />

@@ -1,22 +1,21 @@
-#ifndef _SBUS_H
-#define _SBUS_H
+#ifndef SBUS_H
+#define SBUS_H
 
 #include "defines.h"
-#include "stm32f30x_usart.h"
 
 #define SBUS_BAUDRATE           100000UL
 
-#define SBUS_UART_NUM           USART1
-#define SBUS_CLOCK_ENABLE       RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE)
-#define SBUS_GPIO               GPIOB
-
-#define SBUS_TX_SOURCE          GPIO_PinSource6
-#define SBUS_RX_SOURCE          GPIO_PinSource7
-
-#define SBUS_TX_PIN             (1 << SBUS_TX_SOURCE)
-#define SBUS_RX_PIN             (1 << SBUS_RX_SOURCE)
-
-#define SBUS_GPIO_AF            GPIO_AF_7
+//#define SBUS_UART_NUM           USART1
+//#define SBUS_CLOCK_ENABLE       RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE)
+//#define SBUS_GPIO               GPIOB
+//
+//#define SBUS_TX_SOURCE          GPIO_PinSource6
+//#define SBUS_RX_SOURCE          GPIO_PinSource7
+//
+//#define SBUS_TX_PIN             (1 << SBUS_TX_SOURCE)
+//#define SBUS_RX_PIN             (1 << SBUS_RX_SOURCE)
+//
+//#define SBUS_GPIO_AF            GPIO_AF_7
 
 #define SBUS_CMD_START          0xF0
 #define SBUS_CMD_STOP           0x00

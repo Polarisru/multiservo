@@ -68,17 +68,25 @@ void UART_Init(Sercom *channel, uint8_t pinRXPO, uint8_t pinTXPO, uint32_t baud,
 	  GCLK->PCHCTRL[SERCOM3_GCLK_ID_SLOW].reg = GCLK_PCHCTRL_GEN_GCLK3_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
 	  MCLK->APBCMASK.reg |= MCLK_APBCMASK_SERCOM3;
   } else
+  #ifdef SERCOM4
   if (channel == SERCOM4)
   {
 	  GCLK->PCHCTRL[SERCOM4_GCLK_ID_CORE].reg = UART_GCLK_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos);
 	  GCLK->PCHCTRL[SERCOM4_GCLK_ID_SLOW].reg = GCLK_PCHCTRL_GEN_GCLK3_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
 	  MCLK->APBCMASK.reg |= MCLK_APBCMASK_SERCOM4;
   } else
+  #endif
+  #ifdef SERCOM5
   if (channel == SERCOM5)
   {
 	  GCLK->PCHCTRL[SERCOM5_GCLK_ID_CORE].reg = UART_GCLK_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos);
 	  GCLK->PCHCTRL[SERCOM5_GCLK_ID_SLOW].reg = GCLK_PCHCTRL_GEN_GCLK3_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
 	  MCLK->APBCMASK.reg |= MCLK_APBCMASK_SERCOM5;
+  } else
+  #endif
+  {
+    /**< channel doesn't exist */
+    return;
   }
 
 	channel->USART.CTRLA.reg =
