@@ -103,7 +103,7 @@ static void BOOTLOADER_Send(uint8_t *data, uint8_t len)
 //    /**< Wait till sending is complete */
 //    while ((BL_UART_NUM->SR & USART_SR_TC) == 0);
 //  }
-  KEELOQ_SendUART(data, len);
+  //KEELOQ_SendUART(data, len);
 }
 
 /** \brief Receive data from Bootloader UART
@@ -118,20 +118,20 @@ static bool BOOTLOADER_Receive(uint8_t *data, uint8_t len, uint16_t timeout)
 {
   uint32_t ticks = xTaskGetTickCount();
 
-  KEELOQ_ConfigureRxDMA();
-  //BL_UART_NUM->CR1 |= USART_Mode_Rx;
-  while (len--)
-  {
-    /**< Wait until the data is ready to be received */
-    //while (((BL_UART_NUM->SR & USART_SR_RXNE) == 0) && ((xTaskGetTickCount() - ticks) < timeout));
-    KEELOQ_DoReceiveUART();
-    while (KEELOQ_WaitReceiveUART() && ((xTaskGetTickCount() - ticks) < timeout));
-    /**< Read RX data, combine with DR mask */
-    //*data++ = (uint8_t)(BL_UART_NUM->DR & 0xFF);
-    *data++ = KEELOQ_GetReceiveUART();
-  }
-
-  KEELOQ_ReconfigureDMA();
+//  KEELOQ_ConfigureRxDMA();
+//  //BL_UART_NUM->CR1 |= USART_Mode_Rx;
+//  while (len--)
+//  {
+//    /**< Wait until the data is ready to be received */
+//    //while (((BL_UART_NUM->SR & USART_SR_RXNE) == 0) && ((xTaskGetTickCount() - ticks) < timeout));
+//    KEELOQ_DoReceiveUART();
+//    while (KEELOQ_WaitReceiveUART() && ((xTaskGetTickCount() - ticks) < timeout));
+//    /**< Read RX data, combine with DR mask */
+//    //*data++ = (uint8_t)(BL_UART_NUM->DR & 0xFF);
+//    *data++ = KEELOQ_GetReceiveUART();
+//  }
+//
+//  KEELOQ_ReconfigureDMA();
 
   return true;
 }
@@ -212,7 +212,7 @@ void BOOTLOADER_Stop(void)
   switch (GLOBAL_ConnMode)
   {
     case CONN_MODE_PWM:
-      KEELOQ_Reconfigure();
+      //KEELOQ_Reconfigure();
       //PWM_EnableChannel(PWM_CH1);
       //OUTPUTS_Switch(OUTPUTS_PWM_EN, OUTPUTS_SWITCH_ON);
       break;

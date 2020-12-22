@@ -14,6 +14,8 @@ enum {
   ADC_CHANNEL_NUM
 };
 
+uint16_t ADC_GetValue(uint8_t channel, uint8_t type);
+uint16_t ADC_GetSpikeValue(void);
 void ADC_Configuration(void);
 
 #endif

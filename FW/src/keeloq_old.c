@@ -14,10 +14,10 @@ enum {
 #define KEELOQ_TIMER_VALUE      (CONF_GCLK_TC0_FREQUENCY / 1000000UL * KEELOQ_BIT_LEN / 64)
 
 #define KEELOQ_PORT             GPIO_PORTA
-#define KEELOQ_PIN              11
+#define KEELOQ_PIN              10
 
 #define KEELOQ_IN_PORT          GPIO_PORTA
-#define KEELOQ_IN_PIN           10
+#define KEELOQ_IN_PIN           11
 
 #define KEELOQ_BIT_LEAVE        0
 #define KEELOQ_BIT_TOGGLE       (1 << KEELOQ_PIN)
@@ -157,7 +157,7 @@ bool KEELOQ_Write(uint8_t addr, uint8_t value)
   buff[1] = value;
   while (i < KEELOQ_RETRIES)
   {
-    i++;TC2->COUNT8.PER.reg = 0;
+    i++;
     res = KEELOQ_Transfer(buff, rec);
     /**< Enable PWM */
     //OUTPUTS_Switch(OUTPUTS_PWM_EN, OUTPUTS_SWITCH_ON);

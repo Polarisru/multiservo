@@ -80,7 +80,7 @@ bool CANBUS_Send(uint32_t Id, uint8_t *data, uint8_t datalen)
   return (CAN_WriteMsg(CAN_CHANNEL, &msg) == ERR_NONE);
 }
 
-void CANBUS_SetBaudrate(uint32_t nominal_baudrate, uint32_t data_baudrate)
+bool CANBUS_SetBaudrate(uint32_t nominal_baudrate, uint32_t data_baudrate)
 {
-
+  return true;
 }

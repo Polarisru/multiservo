@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include "samc21e18a.h"
+#include "peripheral_clk_config.h"
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"

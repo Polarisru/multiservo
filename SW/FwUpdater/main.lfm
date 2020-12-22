@@ -1,0 +1,207 @@
+object mainForm: TmainForm
+  Left = 444
+  Height = 190
+  Top = 211
+  Width = 320
+  BorderIcons = [biSystemMenu]
+  Caption = 'Firmware Updater'
+  ClientHeight = 190
+  ClientWidth = 320
+  Constraints.MaxHeight = 190
+  Constraints.MaxWidth = 320
+  Constraints.MinHeight = 190
+  Constraints.MinWidth = 320
+  OnCreate = FormCreate
+  LCLVersion = '1.6.2.0'
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 167
+    Width = 320
+    Panels = <    
+      item
+        Bevel = pbNone
+        Style = psOwnerDraw
+        Width = 180
+      end    
+      item
+        Bevel = pbNone
+        Style = psOwnerDraw
+        Width = 110
+      end>
+    SimplePanel = False
+    OnDrawPanel = StatusBar1DrawPanel
+  end
+  object pnlMain: TPanel
+    Left = 0
+    Height = 167
+    Top = 0
+    Width = 320
+    Align = alClient
+    ClientHeight = 167
+    ClientWidth = 320
+    TabOrder = 1
+    object gbSerialPort: TGroupBox
+      Left = 0
+      Height = 48
+      Top = 72
+      Width = 319
+      Caption = 'Serial port'
+      ClientHeight = 28
+      ClientWidth = 315
+      TabOrder = 1
+      object cbSerialPort: TComboBox
+        Left = 8
+        Height = 23
+        Top = -2
+        Width = 157
+        ItemHeight = 15
+        Style = csDropDownList
+        TabOrder = 0
+      end
+      object btnRefresh: TBitBtn
+        Left = 165
+        Height = 25
+        Top = -3
+        Width = 28
+        Kind = bkRetry
+        Layout = blGlyphRight
+        ModalResult = 4
+        OnClick = btnRefreshClick
+        Spacing = 0
+        TabOrder = 1
+      end
+      object pnlConnect: TPanel
+        Left = 280
+        Height = 23
+        Top = -2
+        Width = 27
+        BevelInner = bvRaised
+        BevelOuter = bvLowered
+        Color = clLime
+        ParentColor = False
+        TabOrder = 2
+        Visible = False
+      end
+      object cbConnect: TCheckBox
+        Left = 208
+        Height = 19
+        Top = 0
+        Width = 65
+        Caption = 'Connect'
+        Color = clDefault
+        Enabled = False
+        OnChange = cbConnectChange
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 3
+      end
+    end
+    object btnWrite: TButton
+      Left = 8
+      Height = 34
+      Top = 124
+      Width = 90
+      Caption = 'Write Flash'
+      Enabled = False
+      OnClick = btnWriteClick
+      TabOrder = 2
+    end
+    object gbFirmwareFile: TGroupBox
+      Left = 1
+      Height = 72
+      Top = 1
+      Width = 318
+      Align = alTop
+      Caption = 'Firmware file'
+      ClientHeight = 52
+      ClientWidth = 314
+      TabOrder = 0
+      object ProgressBar1: TProgressBar
+        Left = 156
+        Height = 18
+        Top = 0
+        Width = 100
+        Anchors = []
+        TabOrder = 1
+        Visible = False
+      end
+      object editFirmwareFile: TFileNameEdit
+        Left = 7
+        Height = 23
+        Top = 0
+        Width = 297
+        DialogTitle = 'Open firmware file'
+        Filter = 'Firmware files (*.fwf)|*.fwf'
+        FilterIndex = 0
+        HideDirectories = False
+        ButtonWidth = 23
+        DirectInput = False
+        NumGlyphs = 1
+        MaxLength = 0
+        TabOrder = 0
+        OnChange = editFirmwareFileChange
+      end
+      object lblSize: TLabel
+        Left = 7
+        Height = 17
+        Top = 28
+        Width = 26
+        Caption = 'Size:'
+        Font.Height = -13
+        ParentColor = False
+        ParentFont = False
+        Visible = False
+      end
+      object lblVersion: TLabel
+        Left = 88
+        Height = 17
+        Top = 28
+        Width = 46
+        Caption = 'Version:'
+        Font.Height = -13
+        ParentColor = False
+        ParentFont = False
+        Visible = False
+      end
+      object lblDate: TLabel
+        Left = 192
+        Height = 17
+        Top = 28
+        Width = 30
+        Caption = 'Date:'
+        Font.Height = -13
+        ParentColor = False
+        ParentFont = False
+        Visible = False
+      end
+    end
+    object btnCheck: TButton
+      Left = 112
+      Height = 34
+      Top = 124
+      Width = 90
+      Caption = 'Check Flash'
+      Enabled = False
+      OnClick = btnCheckClick
+      TabOrder = 3
+    end
+    object btnReset: TButton
+      Left = 219
+      Height = 34
+      Top = 124
+      Width = 90
+      Caption = 'Go to App'
+      Enabled = False
+      OnClick = btnResetClick
+      TabOrder = 4
+    end
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 30
+    OnTimer = Timer1Timer
+    left = 240
+    top = 16
+  end
+end

@@ -102,13 +102,13 @@ void DMA_SetupChannel(uint8_t channel, TDmaSettings *settings)
   descriptor.DSTADDR.reg = (uint32_t)settings->dst_addr;
   if (settings->dst_inc == true)
   {
-    descriptor.DSTADDR.reg += settings->len;
+    descriptor.DSTADDR.reg += settings->len * (1 << settings->beat_size);
     btctrlVal |= DMAC_BTCTRL_DSTINC;
   }
   descriptor.SRCADDR.reg = (uint32_t)settings->src_addr;
   if (settings->src_inc == true)
   {
-    descriptor.SRCADDR.reg += settings->len;
+    descriptor.SRCADDR.reg += settings->len * (1 << settings->beat_size);
     btctrlVal |= DMAC_BTCTRL_SRCINC;
   }
   descriptor.BTCTRL.reg = btctrlVal;
@@ -141,6 +141,15 @@ void DMA_StartChannel(uint8_t channel)
 	/**< Start DMA transfer */
 	DMA_TransferComplete[channel] = false;
 	DMAC->CHCTRLA.reg |= DMAC_CHCTRLA_ENABLE;
+}
+
+void DMA_StopChannel(uint8_t channel)
+{
+  if (channel >= DMA_CHANNELS_NUM)
+    return;
+
+  DMAC->CHID.reg = DMAC_CHID_ID(channel);
+  DMAC->CHCTRLA.reg &= ~DMAC_CHCTRLA_ENABLE;
 }
 
 /** \brief Check if DMA transmission is ready

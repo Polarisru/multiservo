@@ -2,6 +2,7 @@
 #include "actions.h"
 #include "adc.h"
 #include "bootloader.h"
+#include "canbus.h"
 //#include "comm.h"
 #include "conversion.h"
 #include "global.h"
@@ -562,7 +563,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
         }
         if (intVal0 == PASSWORD_SECURED)
         {
-          COMM_SetSecured(true);
+          //COMM_SetSecured(true);
           errMsg = parserOk;
         } else
         {

@@ -23,9 +23,10 @@ void SBUS_SetChannel(uint8_t channel, uint16_t value)
 
 void SBUS_SendCmd(void)
 {
-  uint8_t i, rest;
+  uint8_t i;
+  //uint8_t rest;
   uint8_t len = SBUS_DATA_LEN;
-  uint16_t pos;
+  //uint16_t pos;
 
   memset(SBUS_Data, 0, SBUS_DATA_LEN);
   SBUS_Data[SBUS_OFFS_CMD] = SBUS_CMD_START;
