@@ -17,7 +17,9 @@
 
 #define KEELOQ_PREAMBLE_LEN	  20	      // number of preamble pulses
 
-void KEELOQ_Send(uint8_t *data);
+//void KEELOQ_Send(uint8_t *data);
+bool KEELOQ_Write(uint8_t addr, uint8_t value);
+bool KEELOQ_Read(uint8_t addr, uint8_t *value);
 void KEELOQ_Init(void);
 
 #endif
