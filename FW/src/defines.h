@@ -15,6 +15,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "event_groups.h"
 
 #define INIT_TASK_STACK_SIZE      (200)
 #define MAIN_TASK_STACK_SIZE      (200)
@@ -58,14 +59,23 @@ enum {
 #define MIN_TP                  (-1934)       // -170°
 #define MAX_TP                  (1934)        // +170°
 
+#define SERVO_RAW_ANGLE_SCALE   0x800
+#define SERVO_ANGLE_SCALE       180.0f    // degrees
+#define SERVO_MAX_ANGLE         170.0f    // maximal angle in degrees
+
 #define OPTIONS_RESET           0x00        // options bits
 #define OPTIONS_TERMINATION_ON  (1 << 0)
 #define OPTIONS_REVERSE_ON      (1 << 1)
 
 #define CANBUS_DFLT_ID          0x3F0
 
-#define SERVO_NAME              "DA15-C"
-#define SERVO_NAME_LEN          6
+#define EG_BIT_RS485_RX         (1 << 0)
+#define EG_BIT_CAN_RX           (1 << 1)
+
+#define KEELOQ_ADDR_MAGSENSOR   0x62
+#define KEELOQ_ADDR_TEMP        0x27
+#define KEELOQ_ADDR_VOLTAGE     0x39
+#define KEELOQ_ADDR_CURRENT     0x3A
 
 enum {
   PARAM_TYPE_BOOL,

@@ -14,4 +14,6 @@ float    EE_VoltSupplyDiv;
 
 TaskHandle_t xTaskComm;
 
+EventGroupHandle_t xEventGroupCommon;
+
 #endif

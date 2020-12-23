@@ -10,3 +10,5 @@ int16_t  EE_CurrOffset;
 float    EE_VoltSupplyDiv = 7.67;
 
 TaskHandle_t xTaskComm;
+
+EventGroupHandle_t xEventGroupCommon;

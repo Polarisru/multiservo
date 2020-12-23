@@ -352,6 +352,10 @@
 		</Unit>
 		<Unit filename="src\rs485.h" />
 		<Unit filename="src\rs485cmd.h" />
+		<Unit filename="src\rs485comm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\rs485comm.h" />
 		<Unit filename="src\sbus.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -21,14 +21,14 @@
 
 #define C_Set_Pos170_Silent     0x77    // servo new position command without response
 
-#define C_Set_Scaled            0x78    // servo position command of ±170° area
-#define R_Set_Scaled            0x58    // response code
+#define RS485_CMD_SETSCALED     0x78    // servo position command of ±170° area
+#define RS485_ANS_SETSCALED     0x58    // response code
 
 #define C_Act_Pos_Scaled        0x79    // report of actual position (±170°) command
 #define R_Act_Pos_Scaled        0x59    // response code
 
-#define C_Act_Pos170_report     0x69    // report of actual position (±170°) command
-#define R_Act_Pos170_report     0x49    // response code
+#define RS485_CMD_GETPOS170     0x69    // report of actual position (±170°) command
+#define RS485_ANS_GETPOS170     0x49    // response code
 
 #define C_Failsafe_Pos          0xBB	// set failsafe position command
 #define R_Failsafe_Pos          0x5D	// response code

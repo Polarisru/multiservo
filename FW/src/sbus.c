@@ -1,4 +1,22 @@
+#include "driver_gpio.h"
+#include "driver_uart.h"
+#include "outputs.h"
 #include "sbus.h"
+
+#define SBUS_PORT          GPIO_PORTA
+#define SBUS_PIN_TX        0
+#define SBUS_PIN_RX        1
+#define SBUS_PINMUX_TX     MUX_PA00D_SERCOM1_PAD0
+#define SBUS_PINMUX_RX     MUX_PA01D_SERCOM1_PAD1
+
+#define SBUS_RXPO          1
+#define SBUS_TXPO          0
+
+#define SBUS_CHANNEL       SERCOM1
+#define SBUS_INTHANDLER    SERCOM1_Handler
+#define SBUS_IRQ           SERCOM1_IRQn
+
+#define SBUS_BAUDRATE      100000UL
 
 static uint16_t SBUS_Values[SBUS_MAX_CHANNEL] = {0};
 static uint8_t SBUS_Data[SBUS_MAX_DATALEN];
@@ -8,8 +26,7 @@ void SBUS_Send(uint8_t *data, uint8_t len)
 {
   while (len-- > 0)
   {
-    //while (USART_GetFlagStatus(SBUS_UART_NUM, USART_FLAG_TC) == RESET);
-    //USART_SendData(SBUS_UART_NUM, *data++);
+    UART_SendByte(SBUS_CHANNEL, *data++);
   }
 }
 
@@ -41,40 +58,23 @@ void SBUS_SendCmd(void)
   SBUS_Send(SBUS_Data, len);
 }
 
-void SBUS_Config(void)
+void SBUS_Enable(void)
 {
-//  GPIO_InitTypeDef  GPIO_InitStructure;
-//  USART_InitTypeDef USART_InitStructure;
-//
-//  SBUS_CLOCK_ENABLE;
-//
-//  /**< Setup UART pins (Rx and Tx) */
-//  GPIO_InitStructure.GPIO_Pin = SBUS_TX_PIN;// | SBUS_RX_PIN;
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//  GPIO_Init(SBUS_GPIO, &GPIO_InitStructure);
-//
-//  GPIO_PinAFConfig(SBUS_GPIO, SBUS_TX_SOURCE, SBUS_GPIO_AF);
-//  //GPIO_PinAFConfig(SBUS_GPIO, SBUS_RX_SOURCE, SBUS_GPIO_AF);
-//
-//  /**< Configure UART for SBUS */
-//  USART_DeInit(SBUS_UART_NUM);
-//  USART_InitStructure.USART_BaudRate            = SBUS_BAUDRATE;
-//  USART_InitStructure.USART_WordLength          = USART_WordLength_9b;
-//  USART_InitStructure.USART_StopBits            = USART_StopBits_2;
-//  USART_InitStructure.USART_Parity              = USART_Parity_Even;
-//  USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
-//  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-//  USART_Init(SBUS_UART_NUM, &USART_InitStructure);
-//
-//  /**< Enable the USART's most significant bit first */
-//  USART_MSBFirstCmd(SBUS_UART_NUM, ENABLE);
-//  /**< Enable the Pin active level inversion (for both Rx and Tx) */
-//  USART_InvPinCmd(SBUS_UART_NUM, USART_InvPin_Tx, ENABLE);
-//  USART_InvPinCmd(SBUS_UART_NUM, USART_InvPin_Rx, ENABLE);
-//
-//  /**< Enable UART for SBUS */
-//  USART_Cmd(SBUS_UART_NUM, ENABLE);
+  /**< Setup TX/RX pins */
+  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, SBUS_PINMUX_TX);
+  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, SBUS_PINMUX_RX);
+  OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_ON);
+}
+
+void SBUS_Disable(void)
+{
+  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, GPIO_PIN_FUNC_OFF);
+  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, GPIO_PIN_FUNC_OFF);
+  OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_OFF);
+}
+
+void SBUS_Configuration(void)
+{
+  /**< Configure UART for SBUS */
+  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, false);
 }

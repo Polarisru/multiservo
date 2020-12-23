@@ -1,6 +1,7 @@
 #include "driver_clk.h"
 #include "driver_gpio.h"
 #include "driver_temp.h"
+#include "analog.h"
 #include "canbus.h"
 #include "comm.h"
 #include "global.h"

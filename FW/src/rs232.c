@@ -14,10 +14,10 @@
 #define RS232_TXPO          0
 
 #define RS232_CHANNEL       SERCOM0
-#define RS232_BAUDRATE      115200
-
 #define RS232_INTHANDLER    SERCOM0_Handler
 #define RS232_IRQ           SERCOM0_IRQn
+
+#define RS232_BAUDRATE      115200
 
 /**< Receiving buffer for RS232 communication */
 char RS232_RxBuffer[RS232_BUFFER_SIZE];

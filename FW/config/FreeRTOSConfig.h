@@ -169,7 +169,7 @@ void assert_triggered(const char *file, uint32_t line);
 // <q> Enable timer
 // <id> freertos_use_timers
 #ifndef configUSE_TIMERS
-#define configUSE_TIMERS 0
+#define configUSE_TIMERS 1
 #endif
 
 // <o> Timer task priority <1-10>
@@ -280,7 +280,7 @@ to exclude the API function. */
 // <q> Include the function to pend timer call
 // <id> freertos_xtimerpendfunctioncall
 #ifndef INCLUDE_xTimerPendFunctionCall
-#define INCLUDE_xTimerPendFunctionCall 0
+#define INCLUDE_xTimerPendFunctionCall 1
 #endif
 
 // </e>

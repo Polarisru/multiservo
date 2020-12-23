@@ -37,6 +37,7 @@ void COMM_SetSecured(bool on)
  */
 void COMM_Task(void *pParameters)
 {
+  (void) pParameters;   /* to quiet warnings */
   char buff[128];
   uint16_t pos;
   char *cmd;
