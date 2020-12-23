@@ -49,6 +49,16 @@ void ADC_SetChannel(uint8_t channel)
   ADC0->SWTRIG.bit.START = 1;
 }
 
+/** \brief Get result status
+ *
+ * \return True if ADC result is ready
+ *
+ */
+bool ADC_IsReady(void)
+{
+  return (ADC0->INTFLAG.bit.RESRDY == 1);
+}
+
 /** \brief Get conversion result
  *
  * \return Result as uint16_t

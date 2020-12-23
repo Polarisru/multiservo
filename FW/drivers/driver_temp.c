@@ -30,7 +30,14 @@ void TEMP_Init(void)
  */
 float TEMP_GetValue(void)
 {
-  int32_t value = TSENS->VALUE.bit.VALUE;
+  uint32_t value = TSENS->VALUE.bit.VALUE & 0xFFFFFF;
 
-  return (float)value / 100;
+  if (value & 0x800000)
+  {
+    /**< Negative value */
+    value = 0x1000000 - value;
+    return (-(float)value / 100);
+  }
+
+  return ((float)value / 100);
 }

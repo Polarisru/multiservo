@@ -19,17 +19,12 @@
 #define INIT_TASK_STACK_SIZE      (200)
 #define MAIN_TASK_STACK_SIZE      (200)
 #define MONITOR_TASK_STACK_SIZE   (100)
-#define MOTOR_TASK_STACK_SIZE     (200)
-#define PWM_TASK_STACK_SIZE       (100)
-#define CAN_TASK_STACK_SIZE       (100)
-#define RS485_TASK_STACK_SIZE     (100)
+#define COMM_TASK_STACK_SIZE      (400)
 
+#define INIT_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 #define MAIN_TASK_PRIORITY     (tskIDLE_PRIORITY + 2)
 #define MONITOR_TASK_PRIORITY  (tskIDLE_PRIORITY + 1)
 #define COMM_TASK_PRIORITY     (tskIDLE_PRIORITY + 3)
-#define MOTOR_TASK_PRIORITY    (tskIDLE_PRIORITY + 4)
-//#define HALL_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
-#define INIT_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 
 #define CHAR_CR 	              '\r'
 #define CHAR_NL		              '\n'

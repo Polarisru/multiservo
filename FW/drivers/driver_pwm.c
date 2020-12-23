@@ -1,75 +1,58 @@
 #include "driver_pwm.h"
 #include "driver_gpio.h"
 
-#ifdef TEST_BOARD
-  #define PWM_PORT        GPIO_PORTB
-  #define PWM_PIN         9
-  #define PWM_PIN_MUX     4//MUX_PB09E_TC0_WO1
+static uint32_t PWM_MaxValue;
 
-  #define PWM_TIMER       TC4
-  #define PWM_GCLK_ID     TC4_GCLK_ID
-  #define PWM_TIMER_MCLK  MCLK_APBCMASK_TC4
-
-  #define PWM_WO_CHANNEL  1
-#else
-  #define PWM_PORT        GPIO_PORTA
-  #define PWM_PIN         21
-  #define PWM_PIN_MUX     MUX_PA21E_TC3_WO1
-
-  #define PWM_TIMER       TC3
-  #define PWM_GCLK_ID     TC3_GCLK_ID
-  #define PWM_TIMER_MCLK  MCLK_APBCMASK_TC3
-
-  #define PWM_WO_CHANNEL  1
-#endif
-
-#define PWM_MAX_VALUE   255
-
-#define PWM_FREQ        20000
-
-
-//void TC0_Handler(void)
-//{
-//  if (PWM_TIMER->COUNT8.INTFLAG.reg & TC_INTFLAG_MC1)
-//  {
-//    PWM_TIMER->COUNT8.INTFLAG.reg = TC_INTFLAG_MC1;
-//    PORT_IOBUS->Group[PWM_PORT].OUTTGL.reg = (1UL << PWM_PIN);
-//  }
-//}
-
-void PWM_Init(void)
+void PWM_Init(Tcc *timer, uint32_t freq)
 {
-  /**< Enable PWM pin */
-  GPIO_ClearPin(PWM_PORT, PWM_PIN);
-  GPIO_SetDir(PWM_PORT, PWM_PIN, true);
-  GPIO_SetFunction(PWM_PORT, PWM_PIN, PWM_PIN_MUX);
+  uint8_t division;
 
   /**< Power on the device */
-  MCLK->APBCMASK.reg |= PWM_TIMER_MCLK;
-  GCLK->PCHCTRL[PWM_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  if (timer == TCC0)
+  {
+    MCLK->APBCMASK.reg |= MCLK_APBCMASK_TCC0;
+    GCLK->PCHCTRL[TCC0_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  } else
+  if (timer == TCC1)
+  {
+    MCLK->APBCMASK.reg |= MCLK_APBCMASK_TCC1;
+    GCLK->PCHCTRL[TCC1_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  } else
+  if (timer == TCC2)
+  {
+    MCLK->APBCMASK.reg |= MCLK_APBCMASK_TCC2;
+    GCLK->PCHCTRL[TCC2_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  } else
+  {
+    /**< No such timer */
+    return;
+  }
+
+  PWM_MaxValue = CONF_CPU_FREQUENCY / freq;
+  division = 0;
+  /**< Timer value must be 16-bit, doesn't work with 24-bit, don't know why */
+  while (PWM_MaxValue > 0x10000)
+  {
+    division++;
+    PWM_MaxValue /= 2;
+  }
 
   /**< Reset timer module */
-  PWM_TIMER->COUNT8.CTRLA.reg = TC_CTRLA_SWRST;
-  while (PWM_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_SWRST);
-  /**< Set counting up */
-  PWM_TIMER->COUNT8.CTRLBCLR.bit.DIR = 0;
-  while (PWM_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_CTRLB);
+  timer->CTRLA.reg = TCC_CTRLA_SWRST;
+  while (timer->SYNCBUSY.reg & TCC_SYNCBUSY_SWRST);
+  timer->CTRLBCLR.reg = TCC_CTRLBCLR_DIR;     /* count up */
+  while (timer->SYNCBUSY.reg & TCC_SYNCBUSY_CTRLB);
 
-  /**< Configure timer */
-  PWM_TIMER->COUNT8.CTRLA.reg = TC_CTRLA_PRESCSYNC_GCLK | TC_CTRLA_PRESCALER_DIV8 | TC_CTRLA_MODE_COUNT8;
-
+  /**< configure the TCC device */
+  timer->CTRLA.reg = (TCC_CTRLA_PRESCSYNC_GCLK_Val | TCC_CTRLA_PRESCALER(division));
   /**< Select the waveform generation mode -> normal PWM */
-  PWM_TIMER->COUNT8.WAVE.reg = TC_WAVE_WAVEGEN_NPWM;
-  /**< Set the selected period */
-  PWM_TIMER->COUNT8.PER.reg = PWM_MAX_VALUE - 1;
-  while (PWM_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_PER);
-  PWM_TIMER->COUNT8.COUNT.reg = 0;
-  //PWM_TIMER->COUNT8.CC[0].reg = PWM_MAX_VALUE - 1;
-
-//  PWM_TIMER->COUNT8.EVCTRL.bit.MCEO1 = 1;
-//  NVIC_ClearPendingIRQ(TC0_IRQn);
-//  PWM_TIMER->COUNT8.INTENSET.reg = TC_INTENSET_MC1;//TC_INTENSET_OVF;
-//  NVIC_EnableIRQ(TC0_IRQn);
+  timer->WAVE.reg = TCC_WAVE_WAVEGEN_NPWM;
+  while (timer->SYNCBUSY.reg & TCC_SYNCBUSY_WAVE);
+  timer->PER.reg = PWM_MaxValue - 1;
+  timer->COUNT.reg = 0;
+  /**< Start timer */
+  timer->CTRLA.reg |= (TCC_CTRLA_ENABLE);
+  while (timer->SYNCBUSY.reg & (TCC_SYNCBUSY_SWRST | TCC_SYNCBUSY_ENABLE));
 }
 
 /** \brief Enable PWM channel
@@ -78,10 +61,10 @@ void PWM_Init(void)
  * \return Nothing
  *
  */
-void PWM_Enable(uint8_t channel)
+void PWM_Enable(Tcc *timer)
 {
-  PWM_TIMER->COUNT8.CTRLA.reg |= TC_CTRLA_ENABLE;
-  while (PWM_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_ENABLE);
+  timer->CTRLA.reg |= TCC_CTRLA_ENABLE;
+  while (timer->SYNCBUSY.reg & TCC_SYNCBUSY_ENABLE);
 }
 
 /** \brief Disable PWM channel
@@ -90,10 +73,10 @@ void PWM_Enable(uint8_t channel)
  * \return Nothing
  *
  */
-void PWM_Disable(uint8_t channel)
+void PWM_Disable(Tcc *timer)
 {
-  PWM_TIMER->COUNT8.CTRLA.reg &= (~TC_CTRLA_ENABLE);
-  while (PWM_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_ENABLE);
+  timer->CTRLA.reg &= (~TCC_CTRLA_ENABLE);
+  while (timer->SYNCBUSY.reg & TCC_SYNCBUSY_ENABLE);
 }
 
 /** \brief Set PWM value
@@ -102,7 +85,7 @@ void PWM_Disable(uint8_t channel)
  * \return Nothing
  *
  */
-void PWM_Set(uint8_t value)
+void PWM_Set(Tcc *timer, uint8_t channel, uint16_t value)
 {
-  PWM_TIMER->COUNT8.CC[PWM_WO_CHANNEL].reg = value;
+  timer->CC[channel].reg = (uint32_t)value * PWM_MaxValue / 1000;
 }

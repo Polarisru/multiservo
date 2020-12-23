@@ -3,6 +3,11 @@
 
 #include "defines.h"
 
-void RS232_Init(void);
+#define RS232_BUFFER_SIZE     256
+
+char RS232_RxBuffer[RS232_BUFFER_SIZE];
+
+void RS232_SendData(uint8_t *data, uint8_t len);
+void RS232_Configuration(void);
 
 #endif

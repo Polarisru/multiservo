@@ -1,19 +1,19 @@
 #include "driver_clk.h"
 #include "driver_gpio.h"
-#include "keeloq.h"
-#include "rs485.h"
+#include "driver_temp.h"
 #include "canbus.h"
+#include "comm.h"
 #include "global.h"
+#include "keeloq.h"
+#include "outputs.h"
+#include "pwmout.h"
+#include "rs485.h"
 
 #include "driver_dma.h"
-#include "driver_temp.h"
-#include "driver_timer.h"
-#include "driver_uart.h"
 
 /**< Main RTOS task with periodical actions */
 void MainTask(void *pParameters)
 {
-  #define BIT8    (1UL << 8)
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
 
@@ -25,9 +25,9 @@ void MainTask(void *pParameters)
     {
       /**< Every 1 second */
       ticks += 1000;
-
       /**< Increment working time counter */
-      KEELOQ_Write(0x0A, 0xFF);
+      //KEELOQ_Write(0x0A, 0xFF);
+      OUTPUTS_Toggle(OUTPUTS_LED2);
     }
 	}
 }
@@ -35,17 +35,28 @@ void MainTask(void *pParameters)
 /**< Initializing task, will be suspended after completion */
 void InitTask(void *pParameters)
 {
+  (void) pParameters;   /* to quiet warnings */
   BaseType_t xRet;
 
   GPIO_Init();
+  TEMP_Init();
+  OUTPUTS_Configuration();
+  PWMOUT_Configuration();
+  PWMOUT_Enable();
+  PWMOUT_SetValue(0.0f);
+  ANALOG_Configuration();
 
-  KEELOQ_Init();
+  OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
+
+  //KEELOQ_Init();
 
   /**< Initialize and check EEPROM */
   //EEPROM_Init();
 
   /**< Create main task for periodical actions with low priority */
   xRet = xTaskCreate(MainTask, (const char *) "Main Task", MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, NULL);
+  /**< Create communication task with high priority */
+  xRet = xTaskCreate(COMM_Task, (const char *) "Comm Task", COMM_TASK_STACK_SIZE, NULL, COMM_TASK_PRIORITY, &xTaskComm);
   /**< Create ADC task with lowest priority */
   //xRet = xTaskCreate(MONITOR_Task, (const char *) "ADC Task", MONITOR_TASK_STACK_SIZE, NULL, MONITOR_TASK_PRIORITY, NULL);
 

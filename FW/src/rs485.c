@@ -8,7 +8,6 @@
 
 #define RS485_PORT          GPIO_PORTA
 #define RS485_PIN_DIR       23
-#define RS485_PIN_TE        27
 #define RS485_PIN_TX        24
 #define RS485_PIN_RX        25
 
@@ -35,7 +34,7 @@
 QueueHandle_t xQueueRS485;
 uint8_t Station_ID;
 
-/** \brief SERCOM3 interrupt handler to process RS485 messages
+/** \brief Interrupt handler to process RS485 messages
  *
  * \return Nothing
  *
@@ -55,7 +54,7 @@ void SERCOM3_Handler(void)
     if (RS485_CHANNEL->USART.STATUS.reg & (SERCOM_USART_STATUS_PERR | SERCOM_USART_STATUS_FERR |
                                      SERCOM_USART_STATUS_BUFOVF | SERCOM_USART_STATUS_ISF | SERCOM_USART_STATUS_COLL))
     {
-			RS485_CHANNEL->USART.STATUS.reg = SERCOM_USART_STATUS_MASK;
+      RS485_CHANNEL->USART.STATUS.reg = SERCOM_USART_STATUS_MASK;
 			return;
 		}
 		ch = RS485_CHANNEL->USART.DATA.reg;
@@ -87,39 +86,22 @@ void RS485_SetBaudrate(uint32_t baudrate)
  * \return Nothing
  *
  */
-void RS485_Init(void)
+void RS485_Configuration(void)
 {
-  /**< Configure UART */
+  /**< Configure UART for RS485 bus */
   UART_Init(RS485_CHANNEL, RS485_RXPO, RS485_TXPO, RS485_BAUDRATE, false);
 
   /**< configure DIR pin and TE pin */
   GPIO_ClearPin(RS485_PORT, RS485_PIN_DIR);
-  GPIO_ClearPin(RS485_PORT, RS485_PIN_TE);
   GPIO_SetDir(RS485_PORT, RS485_PIN_DIR, true);
-  GPIO_SetDir(RS485_PORT, RS485_PIN_TE, true);
   GPIO_SetFunction(RS485_PORT, RS485_PIN_DIR, GPIO_PIN_FUNC_OFF);
-  GPIO_SetFunction(RS485_PORT, RS485_PIN_TE, GPIO_PIN_FUNC_OFF);
   /**< Setup TX/RX pins */
-	GPIO_SetFunction(RS485_PORT, RS485_PIN_TX, MUX_PA24C_SERCOM3_PAD2);
-	GPIO_SetFunction(RS485_PORT, RS485_PIN_RX, MUX_PA25C_SERCOM3_PAD3);
+  GPIO_SetFunction(RS485_PORT, RS485_PIN_TX, MUX_PA24C_SERCOM3_PAD2);
+  GPIO_SetFunction(RS485_PORT, RS485_PIN_RX, MUX_PA25C_SERCOM3_PAD3);
 
   /**< enable receiving interrupt */
   RS485_CHANNEL->USART.INTENSET.reg = SERCOM_USART_INTFLAG_RXC;
   NVIC_EnableIRQ(SERCOM3_IRQn);
-}
-
-/** \brief Switch RS485 internal termination resistor
- *
- * \param [in] on True if enable, otherwise disable
- * \return Nothing
- *
- */
-void RS485_SwitchTermination(bool on)
-{
-  if (on)
-    GPIO_SetPin(RS485_PORT, RS485_PIN_TE);
-  else
-    GPIO_ClearPin(RS485_PORT, RS485_PIN_TE);
 }
 
 /** \brief Send data packet via RS485 bus

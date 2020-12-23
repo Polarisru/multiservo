@@ -17,6 +17,11 @@
 
 #define CONF_WDT_PER 0x4
 
+/** \brief Initialize watchdog
+ *
+ * \return Nothing
+ *
+ */
 void WDT_Init(void)
 {
 	uint8_t tmp;
@@ -31,18 +36,33 @@ void WDT_Init(void)
 	WDT->CONFIG.reg = tmp;
 }
 
+/** \brief Enable watchdog
+ *
+ * \return Nothing
+ *
+ */
 void WDT_Enable(void)
 {
 	WDT->CTRLA.reg |= WDT_CTRLA_ENABLE;
 	while (WDT->SYNCBUSY.reg & (WDT_SYNCBUSY_ENABLE | WDT_SYNCBUSY_WEN | WDT_SYNCBUSY_ALWAYSON));
 }
 
+/** \brief Disable watchdog
+ *
+ * \return Nothing
+ *
+ */
 void WDT_Disable(void)
 {
   WDT->CTRLA.reg &= ~WDT_CTRLA_ENABLE;
 	while (WDT->SYNCBUSY.reg & (WDT_SYNCBUSY_ENABLE | WDT_SYNCBUSY_WEN | WDT_SYNCBUSY_ALWAYSON));
 }
 
+/** \brief Reset watchdog
+ *
+ * \return Nothing
+ *
+ */
 void WDT_Reset(void)
 {
  	WDT->CLEAR.reg = WDT_CLEAR_CLEAR_KEY;

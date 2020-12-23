@@ -3,9 +3,9 @@
 
 #include "defines.h"
 
-void PWM_Init(void);
-void PWM_Enable(uint8_t channel);
-void PWM_Disable(uint8_t channel);
-void PWM_Set(uint8_t value);
+void PWM_Init(Tcc *timer, uint32_t freq);
+void PWM_Enable(Tcc *timer);
+void PWM_Disable(Tcc *timer);
+void PWM_Set(Tcc *timer, uint8_t channel, uint16_t value);
 
 #endif

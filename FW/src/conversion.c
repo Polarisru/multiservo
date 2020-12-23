@@ -1,4 +1,4 @@
-#include "adc.h"
+#include "analog.h"
 #include "conversion.h"
 #include "global.h"
 #include "outputs.h"
@@ -12,13 +12,13 @@ static float CONVERSION_VoltageFB;
  */
 float CONVERSION_GetVoltage(void)
 {
-  //float voltage;
+  float voltage;
 
-  //voltage = (float)ADC_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
+  voltage = (float)ANALOG_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
 
-  //return voltage;
+  return voltage;
 
-  return CONVERSION_VoltageFB;
+  //return CONVERSION_VoltageFB;
 }
 
 /** \brief Calculate voltage from additional resistor divider
@@ -30,11 +30,7 @@ float CONVERSION_GetSupplyVoltage(void)
 {
   float voltage;
 
-  #if REVISION >= 7
-  voltage = (float)ADC_GetValue(ADC_CHANNEL_U_SERVO, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv / ADC_MAX_VALUE;
-  #else
-  voltage = 0.0f;
-  #endif
+  voltage = (float)ANALOG_GetValue(ADC_CHANNEL_U, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv/ ADC_MAX_VALUE;
 
   return voltage;
 }
@@ -55,13 +51,13 @@ float CONVERSION_GetCurrent(uint8_t type)
   if (type >= ADC_TYPE_LAST)
     return 0.0;
 
-  value = ADC_GetValue(ADC_CHANNEL_I, type);
+  value = ANALOG_GetValue(ADC_CHANNEL_I, type);
   if (value > EE_CurrOffset)
     value -= EE_CurrOffset;
   else
     value = 0;
 
-  current = (float)value * ADC_REF_VOLTAGE / ADC_MAX_VALUE / CONVERSION_IREF_RESISTANCE / CONVERSION_ILOW_AMPLIF;
+  current = (float)value * ADC_REF_VOLTAGE / ADC_MAX_VALUE / CONVERSION_IREF_RESISTANCE / CONVERSION_I_AMPLIF;
 
   return current;
 }
@@ -76,8 +72,8 @@ float CONVERSION_GetCurrentSpike(void)
   uint16_t value;
   float current;
 
-  value = ADC_GetSpikeValue();
-  current = (float)value * ADC_REF_VOLTAGE / ADC_MAX_VALUE / CONVERSION_IREF_RESISTANCE / CONVERSION_IHIGH_AMPLIF;
+  value = ANALOG_GetSpikeValue();
+  current = (float)value * ADC_REF_VOLTAGE / ADC_MAX_VALUE / CONVERSION_IREF_RESISTANCE / CONVERSION_I_AMPLIF;
 
   return current;
 }
@@ -97,7 +93,7 @@ void CONVERSION_Task(void *pvParameters)
   while (1)
   {
     vTaskDelay(2);
-    voltages[voltCounter++] = ADC_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT);
+    voltages[voltCounter++] = ANALOG_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT);
     if (voltCounter >= CONV_VOLTAGE_LEN)
     {
       voltCounter = 0;

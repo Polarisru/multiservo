@@ -56,5 +56,7 @@ typedef struct
 
 bool CANBUS_Send(uint32_t Id, uint8_t *data, uint8_t datalen);
 bool CANBUS_SetBaudrate(uint32_t nominal_baudrate, uint32_t data_baudrate);
+void CANBUS_Disable(void);
+void CANBUS_Configuration(void);
 
 #endif

@@ -1,6 +1,6 @@
 #include "driver_temp.h"
 #include "actions.h"
-#include "adc.h"
+#include "analog.h"
 #include "bootloader.h"
 #include "canbus.h"
 //#include "comm.h"
@@ -294,7 +294,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_GP:
         /**< Get position from SSI */
-        ACTION_GetPosition(&flVal);
+        ACTIONS_GetPosition(&flVal);
         sprintf(buff, PARSER_Items[index].outFmt, flVal);
         break;
 
@@ -364,13 +364,13 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
         break;
 
       case PARSER_CMD_SI:
-        /**< Set interface (PWM/RS485/CAN) */
+        /**< Set interface (PWM/RS485/CAN/UAVCAN/FUTABA) */
         if (1 != sscanf(cmd, PARSER_Items[index].inFmt, &intVal0))
         {
           errMsg = parserErrParam;
           break;
         }
-        if (ACTION_SetMode((uint8_t)intVal0) == false)
+        if (ACTIONS_SetMode((uint8_t)intVal0) == false)
         {
           errMsg = parserErrParam;
           break;
@@ -385,7 +385,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (ACTION_MoveToPosition(flVal) == false)
+        if (ACTIONS_MoveToPosition(flVal) == false)
         {
           errMsg = parserErrHw;
           break;
@@ -395,7 +395,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_CC:
         /**< Calibrate current (get offset) */
-        intVal0 = ADC_GetValue(ADC_CHANNEL_I, ADC_TYPE_CURRENT);
+        intVal0 = ANALOG_GetValue(ADC_CHANNEL_I, ADC_TYPE_CURRENT);
         //EE_CurrOffset = (uint16_t)intVal0;
         //SETTINGS_WriteVar(&EE_CurrOffsetLow);
         errMsg = parserOk;
@@ -421,7 +421,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (ACTION_ReadByte((uint16_t)intVal0, &bVal) == false)
+        if (ACTIONS_ReadByte((uint16_t)intVal0, &bVal) == false)
         {
           errMsg = parserErrHw;
           break;
@@ -436,7 +436,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (ACTION_WriteByte((uint16_t)intVal0, (uint8_t)intVal1) == false)
+        if (ACTIONS_WriteByte((uint16_t)intVal0, (uint8_t)intVal1) == false)
         {
           errMsg = parserErrHw;
           break;
@@ -467,7 +467,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        sprintf(buff, PARSER_Items[index].outFmt, ADC_GetValue((uint8_t)intVal0, ADC_TYPE_CURRENT));
+        sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValue((uint8_t)intVal0, ADC_TYPE_CURRENT));
         break;
 
       case PARSER_CMD_PWR:
@@ -504,15 +504,15 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_BLS:
         /**< Start bootloader */
-        if (BOOTLOADER_Start() == true)
-          errMsg = parserOk;
-        else
-          errMsg = parserErrHw;
+//        if (BOOTLOADER_Start() == true)
+//          errMsg = parserOk;
+//        else
+//          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLQ:
         /**< Quit bootloader */
-        BOOTLOADER_Stop();
+        //BOOTLOADER_Stop();
         errMsg = parserOk;
         break;
 
@@ -523,10 +523,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (BOOTLOADER_WriteFlash((uint8_t)intVal0, false) == true)
-          errMsg = parserOk;
-        else
-          errMsg = parserErrHw;
+//        if (BOOTLOADER_WriteFlash((uint8_t)intVal0, false) == true)
+//          errMsg = parserOk;
+//        else
+//          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLC:
@@ -536,10 +536,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (BOOTLOADER_CheckCRC((uint8_t)intVal0, (uint16_t)intVal1) == true)
-          errMsg = parserOk;
-        else
-          errMsg = parserErrHw;
+//        if (BOOTLOADER_CheckCRC((uint8_t)intVal0, (uint16_t)intVal1) == true)
+//          errMsg = parserOk;
+//        else
+//          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLE:
@@ -549,10 +549,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        if (BOOTLOADER_WriteEEPROM((uint16_t)intVal0, (uint8_t)intVal1) == true)
-          errMsg = parserOk;
-        else
-          errMsg = parserErrHw;
+//        if (BOOTLOADER_WriteEEPROM((uint16_t)intVal0, (uint8_t)intVal1) == true)
+//          errMsg = parserOk;
+//        else
+//          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_PSW:
