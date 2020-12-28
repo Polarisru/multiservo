@@ -77,30 +77,3 @@ float CONVERSION_GetCurrentSpike(void)
 
   return current;
 }
-
-/**< Conversion task */
-void CONVERSION_Task(void *pvParameters)
-{
-  #define CONV_VOLTAGE_LEN    16
-
-  uint16_t voltages[CONV_VOLTAGE_LEN];
-  uint8_t  voltCounter = 0;
-  uint16_t sum;
-  uint8_t  i;
-
-  CONVERSION_VoltageFB = 0.0f;
-
-  while (1)
-  {
-    vTaskDelay(2);
-    voltages[voltCounter++] = ANALOG_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT);
-    if (voltCounter >= CONV_VOLTAGE_LEN)
-    {
-      voltCounter = 0;
-      sum = 0;
-      for (i = 0; i < CONV_VOLTAGE_LEN; i++)
-        sum += voltages[i];
-      CONVERSION_VoltageFB = (float)sum / CONV_VOLTAGE_LEN * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
-    }
-  }
-}

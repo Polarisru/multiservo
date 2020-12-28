@@ -4,6 +4,7 @@
 #include "analog.h"
 #include "canbus.h"
 #include "comm.h"
+#include "eeprom.h"
 #include "global.h"
 #include "keeloq.h"
 #include "outputs.h"
@@ -39,12 +40,17 @@ void InitTask(void *pParameters)
   (void) pParameters;   /* to quiet warnings */
   BaseType_t xRet;
 
+  /**< Create event group */
+  xEventGroupCommon = xEventGroupCreate();
+
   GPIO_Init();
   TEMP_Init();
+
   OUTPUTS_Configuration();
   PWMOUT_Configuration();
   PWMOUT_Enable();
   PWMOUT_SetValue(0.0f);
+  RS485_Configuration();
   ANALOG_Configuration();
 
   OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
@@ -52,7 +58,7 @@ void InitTask(void *pParameters)
   //KEELOQ_Init();
 
   /**< Initialize and check EEPROM */
-  //EEPROM_Init();
+  EEPROM_Init();
 
   /**< Create main task for periodical actions with low priority */
   xRet = xTaskCreate(MainTask, (const char *) "Main Task", MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, NULL);

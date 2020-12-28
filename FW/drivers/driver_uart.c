@@ -146,3 +146,28 @@ void UART_SendByte(Sercom *channel, uint8_t data)
   channel->USART.DATA.reg = data;
   while (channel->USART.INTFLAG.bit.TXC == 0);
 }
+
+/** \brief Check if any data is present in serial input buffer
+ *
+ * \param [in] channel Number of SERCOM channel
+ * \return True if receiving buffer has data
+ *
+ */
+bool UART_HaveData(Sercom *channel)
+{
+  return (channel->USART.INTFLAG.bit.RXC == 1);
+}
+
+/** \brief Receive one byte from serial interface
+ *
+ * \param [in] channel Number of SERCOM channel
+ * \return Received byte as uint8_t
+ *
+ */
+uint8_t UART_GetByte(Sercom *channel)
+{
+  /**< Wait until the data is ready to be received */
+  while (channel->USART.INTFLAG.bit.RXC == 0);
+  /**< Read RX data, combine with mask */
+  return (uint8_t)(channel->USART.DATA.reg & 0xff);
+}

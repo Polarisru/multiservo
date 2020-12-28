@@ -7,7 +7,7 @@ float GLOBAL_PeakCurrent;
 
 /**< EEPROM variables with default values */
 int16_t  EE_CurrOffset;
-float    EE_VoltSupplyDiv = 7.67;
+float    EE_VoltSupplyDiv;
 
 TaskHandle_t xTaskComm;
 

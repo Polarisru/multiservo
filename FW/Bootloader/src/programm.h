@@ -14,8 +14,6 @@
 
 #define START_DELAY       5000000
 
-#define PAGE_SIZE         256
-
 #define CMD_FLASH_PAGE    0x81    // FLASH one page (256b). Format: COM ID ZregH ZregL 0x00 0x00 CRCH CRCL
 #define CMD_CHECK_FLASH   0x83    // Verify checksum for 1 FLASH page. Format: COM ID page# 0x00 CRC_pageH CRC_pageL CRCH CRCL
 #define CMD_FILL_BUFF   	0x86    // Write the whole page to tmp buffer. The same format as Fill_Tmp_Buf_long, but data bytes are unprotected. No response
@@ -43,5 +41,10 @@
 #define BOOTLOADER_KEY1     (0x12345678)
 #define BOOTLOADER_KEY2     (0x43211234)
 #define BOOTLOADER_SIGN     (0x11223344)
+
+#define PAGE_SIZE             256
+
+#define BOOT_SIZE             4096
+#define FLASH_APP_ADDRESS     BOOT_SIZE
 
 #endif

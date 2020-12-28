@@ -21,7 +21,7 @@ void FLASH_EraseRow(uint32_t *dst)
   FLASH_WaitReady();
   NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
 
-  // Execute "ER" Erase Row
+  /**< Execute "ER" Erase Row */
   NVMCTRL->ADDR.reg = (uint32_t)dst / 2;
   NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_ER;
   FLASH_WaitReady();
@@ -38,7 +38,7 @@ void FLASH_EraseRowEE(uint32_t *dst)
   FLASH_WaitReady();
   NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
 
-  // Execute "ER" Erase Row
+  /**< Execute "ER" Erase Row */
   NVMCTRL->ADDR.reg = (uint32_t)dst / 2;
   NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_RWWEEER;
   FLASH_WaitReady();
@@ -74,7 +74,7 @@ void FLASH_EraseFull(uint32_t *start_address)
  */
 void FLASH_WriteWords(uint32_t *dst, uint32_t *src, uint32_t n_words)
 {
-  // Set automatic page write
+  /**< Set automatic page write */
   NVMCTRL->CTRLB.bit.MANW = 0;
 
   while (n_words > 0)
@@ -82,13 +82,13 @@ void FLASH_WriteWords(uint32_t *dst, uint32_t *src, uint32_t n_words)
     uint32_t len = (FLASH_PAGE_SIZE >> 2) < n_words ? (FLASH_PAGE_SIZE >> 2) : n_words;
     n_words -= len;
 
-    // Execute "PBC" Page Buffer Clear
+    /**< Execute "PBC" Page Buffer Clear */
     NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_PBC;
     FLASH_WaitReady();
     while (len--)
       *dst++ = *src++;
 
-    // Execute "WP" Write Page
+    /**< Execute "WP" Write Page */
     NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_WP;
     FLASH_WaitReady();
   }
@@ -104,7 +104,7 @@ void FLASH_WriteWords(uint32_t *dst, uint32_t *src, uint32_t n_words)
  */
 void FLASH_WriteWordsEE(uint32_t *dst, uint32_t *src, uint32_t n_words)
 {
-  // Set automatic page write
+  /**< Set automatic page write */
   NVMCTRL->CTRLB.bit.MANW = 0;
 
   while (n_words > 0)
@@ -112,21 +112,14 @@ void FLASH_WriteWordsEE(uint32_t *dst, uint32_t *src, uint32_t n_words)
     uint32_t len = (FLASH_PAGE_SIZE >> 2) < n_words ? (FLASH_PAGE_SIZE >> 2) : n_words;
     n_words -= len;
 
-    // Execute "PBC" Page Buffer Clear
+    /**< Execute "PBC" Page Buffer Clear */
     NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_PBC;
     FLASH_WaitReady();
     while (len--)
       *dst++ = *src++;
 
-    // Execute "WP" Write Page
+    /**< Execute "WP" Write Page */
     NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMDEX_KEY | NVMCTRL_CTRLA_CMD_RWWEEWP;
     FLASH_WaitReady();
   }
 }
-
-/*int32_t dst = 0x00009000;
-uint8_t wr_buff[256];
-for (value = 0; value < 256; value++)
-  wr_buff[value] = value;
-FLASH_EraseRow((uint32_t*)dst);
-FLASH_WriteWords((uint32_t*)dst, (uint32_t*)wr_buff, 256 >> 2);*/

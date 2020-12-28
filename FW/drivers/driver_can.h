@@ -47,10 +47,11 @@ int32_t CAN_ReadMsg(Can *channel, struct can_message *msg);
 int32_t CAN_WriteMsg(Can *channel, struct can_message *msg);
 int32_t CAN_SetFilter(uint8_t index, enum can_format fmt, struct can_filter *filter);
 int32_t CAN_SetRangeFilter(uint8_t index, enum can_format fmt, uint32_t start_id, uint32_t stop_id);
-void CAN_Init(Can *channel);
 void CAN_Enable(Can *channel);
 void CAN_Disable(Can *channel);
+bool CAN_SetBaudrate(Can *channel, uint32_t nominal_baudrate, uint32_t data_baudrate);
 void CAN_CheckBus(Can *channel);
+void CAN_Init(Can *channel);
 
 #endif
 

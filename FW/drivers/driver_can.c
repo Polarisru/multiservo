@@ -250,6 +250,21 @@ void CAN_Disable(Can *channel)
   channel->IR.bit.RF0N = 1;
 }
 
+/** \brief Set baudrate
+ *
+ * \param [in] nominal_baudrate Nominal baudrate
+ * \param [in] data_baudrate Data baudrate (CAN FD only)
+ * \return bool True if succeed
+ *
+ */
+bool CAN_SetBaudrate(Can *channel, uint32_t nominal_baudrate, uint32_t data_baudrate)
+{
+  /**< Nominal bit timing and prescaling */
+  channel->NBTP.reg = CONF_CAN0_BTP_REG;
+  /**< Data bit timing and prescaling */
+  channel->DBTP.reg = CONF_CAN0_DBTP_REG;
+}
+
 /** \brief Check if CAN bus is stopped and restore it
  *
  * \param [in] channel Number of the CAN channel

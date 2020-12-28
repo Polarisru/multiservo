@@ -67,7 +67,7 @@ void CAN_INTHANDLER(void)
 //		//dev->cb.irq_handler(dev, CAN_IRQ_DO);
 //	}
 
-	CAN0->IR.reg = ir;
+	CAN_CHANNEL->IR.reg = ir;
 
   /**< Now the buffer is empty we can switch context if necessary */
   portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -87,6 +87,9 @@ bool CANBUS_Send(uint32_t Id, uint8_t *data, uint8_t datalen)
 
 bool CANBUS_SetBaudrate(uint32_t nominal_baudrate, uint32_t data_baudrate)
 {
+  CAN_Disable(CAN_CHANNEL);
+  CAN_SetBaudrate(CAN_CHANNEL, nominal_baudrate, data_baudrate);
+  CAN_Enable(CAN_CHANNEL);
   return true;
 }
 

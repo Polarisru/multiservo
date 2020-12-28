@@ -59,7 +59,8 @@ void RS485_INTHANDLER(void)
     if ((buffer[RS485_OFFS_ID] == Station_ID) || (buffer[RS485_OFFS_ID] == RS485_BROADCAST_ID))
     {
       /**< have got our ID or broadcast ID */
-      crc = CRC16_CalcKearfott(buffer, RS485_PAKET_SIZE - RS485_CRC_LEN);
+      crc = CRC16_INIT_VAL;
+      crc = CRC16_Calc(crc, buffer, RS485_PAKET_SIZE - RS485_CRC_LEN);
       if ((uint8_t)(crc >> 8) == buffer[RS485_OFFS_CRC] && (uint8_t)crc == buffer[RS485_OFFS_CRC + 1])
       {
         /**< CRC is Ok, place packet to RS485 processing queue */
@@ -163,7 +164,8 @@ bool RS485_Transfer(uint8_t *tx_data, uint8_t reply, uint8_t *rx_data, uint8_t t
 
   while (errors < RS485_MAX_RETRIES)
   {
-    crc = CRC16_CalcKearfott(tx_data, RS485_OFFS_CRC);
+    crc = CRC16_INIT_VAL;
+    crc = CRC16_Calc(crc, tx_data, RS485_OFFS_CRC);
     tx_data[RS485_OFFS_CRC] = (uint8_t)(crc >> 8);
     tx_data[RS485_OFFS_CRC + 1] = (uint8_t)crc;
     RS485_Send(tx_data, RS485_PAKET_SIZE);
@@ -219,4 +221,6 @@ void RS485_Configuration(void)
   /**< Should use lower priority than FreeRTOS interrupts to allow interrupts usage for the RTOS */
   NVIC_SetPriority(RS485_IRQ, 7);
   NVIC_EnableIRQ(RS485_IRQ);
+
+  Station_ID = fixed_ID;
 }

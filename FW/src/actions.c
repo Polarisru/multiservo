@@ -51,12 +51,40 @@ bool ACTIONS_GetPosition(float *pos)
 
 bool ACTIONS_ReadByte(uint16_t addr, uint8_t *value)
 {
-  return true;
+  switch (GLOBAL_ConnMode)
+  {
+    case CONN_MODE_PWM:
+      return true;
+    case CONN_MODE_RS485:
+      return RS485COMM_ReadByte(addr, value);
+    case CONN_MODE_CAN:
+      //return CANBUS_ReadByte(addr, value);
+    case CONN_MODE_UAVCAN:
+      //return CANBUS_GetPositionAmazon(pos);
+    case CONN_MODE_SBUS:
+      break;
+  }
+
+  return false;
 }
 
 bool ACTIONS_WriteByte(uint16_t addr, uint8_t value)
 {
-  return true;
+  switch (GLOBAL_ConnMode)
+  {
+    case CONN_MODE_PWM:
+      return true;
+    case CONN_MODE_RS485:
+      return RS485COMM_WriteByte(addr, value);
+    case CONN_MODE_CAN:
+      //return CANBUS_WriteByte(addr, value);
+    case CONN_MODE_UAVCAN:
+      //return CANBUS_GetPositionAmazon(pos);
+    case CONN_MODE_SBUS:
+      break;
+  }
+
+  return false;
 }
 
 /** \brief Read device parameter

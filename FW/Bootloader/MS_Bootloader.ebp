@@ -18,7 +18,7 @@
 					<Add option="-Wall" />
 					<Add option="-fdata-sections" />
 					<Add option="-ffunction-sections" />
-					<Add option="-O0" />
+					<Add option="-O1" />
 					<Add option="-g3" />
 				</Compiler>
 				<Cpp>
@@ -37,20 +37,16 @@
 			</Target>
 		</Build>
 		<Device>
-			<Add option="$device=cortex-m4" />
-			<Add option="$fpu=fpv4-sp-d16" />
-			<Add option="$lscript=../sys/stm32f410rb_flash.ld" />
+			<Add option="$device=cortex-m0plus" />
+			<Add option="$lscript=../sys/samc21e18a_flash.ld" />
 			<Add option="$stack=0x0100" />
 			<Add option="$heap=0x0000" />
 		</Device>
 		<Compiler>
-			<Add option="-mfloat-abi=hard" />
 			<Add option="-fno-strict-aliasing" />
-			<Add symbol="ARM_MATH_CM4" />
-			<Add symbol="__FPU_USED" />
-			<Add symbol="STM32F410xx" />
-			<Add symbol="STM32F4XX" />
-			<Add symbol="USE_STDPERIPH_DRIVER" />
+			<Add symbol="__ATSAMC21E18A__" />
+			<Add symbol="__TARGET_CPU_CORTEX_M0" />
+			<Add symbol="BOOTLOADER" />
 			<Add directory=".\inc" />
 			<Add directory=".\src" />
 			<Add directory=".\cmsis" />
@@ -63,195 +59,134 @@
 			<Add option="-Wl,--gc-sections" />
 			<Add option="-lm" />
 		</Linker>
-		<Unit filename="inc\crc16.h" />
-		<Unit filename="inc\defines.h" />
-		<Unit filename="inc\flash_if.h" />
-		<Unit filename="inc\programm.h" />
-		<Unit filename="inc\uart.h" />
-		<Unit filename="inc\xtea.h" />
 		<Unit filename="src\crc16.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\flash_if.c">
-			<Option compilerVar="CC" />
-		</Unit>
+		<Unit filename="src\crc16.h" />
+		<Unit filename="src\defines.h" />
 		<Unit filename="src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\uart.c">
+		<Unit filename="src\programm.h" />
+		<Unit filename="src\rs232.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src\rs232.h" />
 		<Unit filename="src\xtea.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\inc\misc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_adc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_can.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_cec.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_crc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_cryp.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dac.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dbgmcu.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dcmi.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dfsdm.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dma.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dma2d.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_dsi.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_exti.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_flash.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_flash_ramfunc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_fmpi2c.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_gpio.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_hash.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_i2c.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_iwdg.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_lptim.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_ltdc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_pwr.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_qspi.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_rcc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_rng.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_rtc.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_sai.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_sdio.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_spdifrx.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_spi.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_syscfg.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_tim.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_usart.h" />
-		<Unit filename="..\SPL\inc\stm32f4xx_wwdg.h" />
-		<Unit filename="..\SPL\src\misc.c">
+		<Unit filename="src\xtea.h" />
+		<Unit filename="..\CMSIS\arm_common_tables.h" />
+		<Unit filename="..\CMSIS\arm_const_structs.h" />
+		<Unit filename="..\CMSIS\arm_math.h" />
+		<Unit filename="..\CMSIS\cmsis_armcc.h" />
+		<Unit filename="..\CMSIS\cmsis_armclang.h" />
+		<Unit filename="..\CMSIS\cmsis_compiler.h" />
+		<Unit filename="..\CMSIS\cmsis_gcc.h" />
+		<Unit filename="..\CMSIS\core_cm0plus.h" />
+		<Unit filename="..\config\peripheral_clk_config.h" />
+		<Unit filename="..\drivers\driver_clk.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_adc.c">
+		<Unit filename="..\drivers\driver_clk.h" />
+		<Unit filename="..\drivers\driver_flash.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_can.c">
+		<Unit filename="..\drivers\driver_flash.h" />
+		<Unit filename="..\drivers\driver_gpio.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_cec.c">
+		<Unit filename="..\drivers\driver_gpio.h" />
+		<Unit filename="..\drivers\driver_uart.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_crc.c">
+		<Unit filename="..\drivers\driver_uart.h" />
+		<Unit filename="..\include\component-version.h" />
+		<Unit filename="..\include\component\ac.h" />
+		<Unit filename="..\include\component\adc.h" />
+		<Unit filename="..\include\component\can.h" />
+		<Unit filename="..\include\component\ccl.h" />
+		<Unit filename="..\include\component\dac.h" />
+		<Unit filename="..\include\component\divas.h" />
+		<Unit filename="..\include\component\dmac.h" />
+		<Unit filename="..\include\component\dsu.h" />
+		<Unit filename="..\include\component\eic.h" />
+		<Unit filename="..\include\component\evsys.h" />
+		<Unit filename="..\include\component\freqm.h" />
+		<Unit filename="..\include\component\gclk.h" />
+		<Unit filename="..\include\component\hmatrixb.h" />
+		<Unit filename="..\include\component\mclk.h" />
+		<Unit filename="..\include\component\mtb.h" />
+		<Unit filename="..\include\component\nvmctrl.h" />
+		<Unit filename="..\include\component\osc32kctrl.h" />
+		<Unit filename="..\include\component\oscctrl.h" />
+		<Unit filename="..\include\component\pac.h" />
+		<Unit filename="..\include\component\pm.h" />
+		<Unit filename="..\include\component\port.h" />
+		<Unit filename="..\include\component\rstc.h" />
+		<Unit filename="..\include\component\rtc.h" />
+		<Unit filename="..\include\component\sdadc.h" />
+		<Unit filename="..\include\component\sercom.h" />
+		<Unit filename="..\include\component\supc.h" />
+		<Unit filename="..\include\component\tc.h" />
+		<Unit filename="..\include\component\tcc.h" />
+		<Unit filename="..\include\component\tsens.h" />
+		<Unit filename="..\include\component\wdt.h" />
+		<Unit filename="..\include\instance\ac.h" />
+		<Unit filename="..\include\instance\adc0.h" />
+		<Unit filename="..\include\instance\adc1.h" />
+		<Unit filename="..\include\instance\can0.h" />
+		<Unit filename="..\include\instance\can1.h" />
+		<Unit filename="..\include\instance\ccl.h" />
+		<Unit filename="..\include\instance\dac.h" />
+		<Unit filename="..\include\instance\divas.h" />
+		<Unit filename="..\include\instance\dmac.h" />
+		<Unit filename="..\include\instance\dsu.h" />
+		<Unit filename="..\include\instance\eic.h" />
+		<Unit filename="..\include\instance\evsys.h" />
+		<Unit filename="..\include\instance\freqm.h" />
+		<Unit filename="..\include\instance\gclk.h" />
+		<Unit filename="..\include\instance\hmatrixhs.h" />
+		<Unit filename="..\include\instance\mclk.h" />
+		<Unit filename="..\include\instance\mtb.h" />
+		<Unit filename="..\include\instance\nvmctrl.h" />
+		<Unit filename="..\include\instance\osc32kctrl.h" />
+		<Unit filename="..\include\instance\oscctrl.h" />
+		<Unit filename="..\include\instance\pac.h" />
+		<Unit filename="..\include\instance\pm.h" />
+		<Unit filename="..\include\instance\port.h" />
+		<Unit filename="..\include\instance\ptc.h" />
+		<Unit filename="..\include\instance\rstc.h" />
+		<Unit filename="..\include\instance\rtc.h" />
+		<Unit filename="..\include\instance\sdadc.h" />
+		<Unit filename="..\include\instance\sercom0.h" />
+		<Unit filename="..\include\instance\sercom1.h" />
+		<Unit filename="..\include\instance\sercom2.h" />
+		<Unit filename="..\include\instance\sercom3.h" />
+		<Unit filename="..\include\instance\sercom4.h" />
+		<Unit filename="..\include\instance\sercom5.h" />
+		<Unit filename="..\include\instance\supc.h" />
+		<Unit filename="..\include\instance\tc0.h" />
+		<Unit filename="..\include\instance\tc1.h" />
+		<Unit filename="..\include\instance\tc2.h" />
+		<Unit filename="..\include\instance\tc3.h" />
+		<Unit filename="..\include\instance\tc4.h" />
+		<Unit filename="..\include\instance\tcc0.h" />
+		<Unit filename="..\include\instance\tcc1.h" />
+		<Unit filename="..\include\instance\tcc2.h" />
+		<Unit filename="..\include\instance\tsens.h" />
+		<Unit filename="..\include\instance\wdt.h" />
+		<Unit filename="..\include\pio\samc21e18a.h" />
+		<Unit filename="..\include\sam.h" />
+		<Unit filename="..\include\samc21.h" />
+		<Unit filename="..\include\samc21e18a.h" />
+		<Unit filename="..\include\system_samc21.h" />
+		<Unit filename="..\sys\startup_samc21.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_cryp.c">
+		<Unit filename="..\sys\system_samc21.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_cryp_aes.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_cryp_des.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_cryp_tdes.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dac.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dbgmcu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dcmi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dfsdm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dma.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dma2d.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_dsi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_exti.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_flash.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_flash_ramfunc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_fmpi2c.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_gpio.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_hash.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_hash_md5.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_hash_sha1.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_i2c.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_iwdg.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_lptim.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_ltdc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_pwr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_qspi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_rcc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_rng.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_rtc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_sai.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_sdio.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_spdifrx.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_spi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_syscfg.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_tim.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_usart.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\SPL\src\stm32f4xx_wwdg.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\sys\startup_stm32f4xx.S">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\sys\stm32f4xx.h" />
-		<Unit filename="..\sys\stm32f4xx_conf.h" />
-		<Unit filename="..\sys\system_stm32f4xx.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\sys\system_stm32f4xx.h" />
 		<Extensions>
 			<code_completion />
 			<debugger>

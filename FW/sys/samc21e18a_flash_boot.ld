@@ -128,6 +128,17 @@ SECTIONS
         _ezero = .;
     } > ram
 
+    .heap (NOLOAD):
+    {
+      . = ALIGN(4);
+      __HeapBase = .;
+      __end__ = .;
+      end = __end__;
+      _end = __end__;
+      *(.heap*)
+      __HeapLimit = .;
+    } > ram
+
     /* stack section */
     .stack (NOLOAD):
     {
