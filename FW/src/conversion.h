@@ -10,6 +10,7 @@
 #define CONVERSION_TEMP_COEFF_K       0.010f
 
 float CONVERSION_GetVoltage(void);
+float CONVERSION_GetFeedbackPos(void);
 float CONVERSION_GetSupplyVoltage(void);
 float CONVERSION_GetCurrent(uint8_t type);
 float CONVERSION_GetCurrentSpike(void);

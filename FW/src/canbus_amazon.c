@@ -39,25 +39,24 @@ static const uint8_t BitReverseTable256[] =
  bool CANBUS_TransferAmazon(uint32_t id, uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint16_t rx_cmd, uint8_t timeout)
 {
   uint8_t errors = 0;
-  CANFDMessage tx_msg;
-  CANFDMessage rx_msg;
+//  CANFDMessage tx_msg;
+//  CANFDMessage rx_msg;
+  uint8_t data[CANBUS_MAX_LEN];
   uint32_t ticks;
   uint16_t cmd;
+  TCanMsg rx_msg;
 
-  tx_msg.id = id;
-  memcpy(tx_msg.data, tx_data, tx_len);
+  memcpy(data, tx_data, tx_len);
   /**< Add tail to every Amazon message */
-  tx_msg.data[tx_len] = (canAmazonTransferID++ & AMAZON_TAIL_MASK) | AMAZON_TAIL_SIGN;
-  tx_msg.len = tx_len + 1;
+  data[tx_len] = (canAmazonTransferID++ & AMAZON_TAIL_MASK) | AMAZON_TAIL_SIGN;
+  tx_len++;
   //tx_msg.ext = true;
   //tx_msg.type = MCP2518FD_CANFD_WITH_BIT_RATE_SWITCH;
 
   while (errors < CANBUS_MAX_RETRIES)
   {
     /**< First empty FIFO to avoid duplicated messages from last communication */
-    //MCP2518FD_ResetRxFifo();
-    if (CANBUS_SendMessage(&tx_msg, true, true, true) == false)
-    //if (MCP2518FD_SendMsg(&tx_msg) == false)
+    if (CANBUS_SendMessage(id, data, tx_len, true, true, true) == false)
       return false;
     /**< Don't wait for reply, just go out */
     if (timeout == 0)
@@ -66,7 +65,6 @@ static const uint8_t BitReverseTable256[] =
     ticks = xTaskGetTickCount() + timeout;
     while (xTaskGetTickCount() < ticks)
     {
-      //if (MCP2518FD_ReceiveMsg(&rx_msg) == true)
       if (CANBUS_ReceiveMessage(&rx_msg) == true)
       {
         cmd = (uint16_t)(rx_msg.id >> AMAZON_OFFS_CMD);
@@ -165,7 +163,7 @@ bool CANBUS_GetPositionAmazon(float *pos)
 bool CANBUS_GetParameter(uint8_t offset, uint8_t len, void *val)
 {
   uint32_t id;
-  CANFDMessage rx_msg;
+  TCanMsg rx_msg;
   float flVal;
 
   id = AMAZON_BUILD_ID(AMAZON_CMD_GETPOS);

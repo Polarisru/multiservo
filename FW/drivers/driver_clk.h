@@ -9,7 +9,7 @@
 // <i> Indicates whether configuration for XOSC is enabled or not
 // <id> enable_xosc
 #ifndef CONF_XOSC_CONFIG
-#define CONF_XOSC_CONFIG 0
+#define CONF_XOSC_CONFIG 1
 #endif
 
 // <o> Frequency <400000-32000000>
@@ -24,7 +24,7 @@
 // <i> Indicates whether External Multipurpose Crystal Oscillator is enabled or not
 // <id> xosc_arch_enable
 #ifndef CONF_XOSC_ENABLE
-#define CONF_XOSC_ENABLE 0
+#define CONF_XOSC_ENABLE 1
 #endif
 
 // <o> Start-Up Time

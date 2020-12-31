@@ -17,26 +17,26 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
 {
   uint8_t errors = 0;
   uint32_t ticks;
-  CANFDMessage tx_msg;
-  CANFDMessage rx_msg;
+  uint32_t id;
+//  CANFDMessage tx_msg;
+//  CANFDMessage rx_msg;
+  TCanMsg rx_msg;
 
   /**< Build CAN packet here */
-  tx_msg.id = CANBUS_CAN_ID;
-  tx_msg.len = tx_len;
-  memcpy(tx_msg.data, tx_data, tx_len);
+//  tx_msg.id = CANBUS_CAN_ID;
+//  tx_msg.len = tx_len;
+//  memcpy(tx_msg.data, tx_data, tx_len);
+  id = CANBUS_CAN_ID;
 
   while (errors < CANBUS_MAX_RETRIES)
   {
     /**< First empty FIFO to avoid duplicated messages from last communication */
-    //MCP2518FD_ResetRxFifo();
-    //if (CANBUS_SendMessage(CANBUS_CAN_ID, CAN_ID_STD, tx_data, tx_len) == false)
-    if (CANBUS_SendMessage(&tx_msg, false, false, false) == false)
+    if (CANBUS_SendMessage(id, tx_data, tx_len, false, false, false) == false)
       return false;
     /**< Wait till reply is received or timeout occurred */
     ticks = xTaskGetTickCount() + timeout;
     if (xTaskGetTickCount() < ticks)
     {
-      //if (MCP2518FD_ReceiveMsg(&rx_msg) == true)
       if (CANBUS_ReceiveMessage(&rx_msg) == true)
       {
         if (rx_msg.data[CANMSG_OFFS_CMD] == (tx_data[CANMSG_OFFS_CMD] | CANMSG_CMD_REPLY_BIT))
@@ -123,7 +123,7 @@ bool CANBUS_ReadByte(uint16_t addr, uint8_t *value)
   if (CANBUS_Transfer(tx_buff, 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  *value = CANBUS_RxBuffer[CANMSG_OFFS_DATA];
+  *value = CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1];
 
   return true;
 }
@@ -212,7 +212,7 @@ bool CANBUS_GetTemperature(uint8_t *value)
  */
 bool CANBUS_StartBL(void)
 {
-  CANFDMessage tx_msg;
+  TCanMsg tx_msg;
   uint32_t uval32;
 
   tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
@@ -232,7 +232,7 @@ bool CANBUS_StartBL(void)
  */
 bool CANBUS_GoToApp(void)
 {
-  CANFDMessage tx_msg;
+  TCanMsg tx_msg;
   uint32_t uval32;
 
   tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
@@ -254,7 +254,7 @@ bool CANBUS_GoToApp(void)
  */
 bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
 {
-  CANFDMessage tx_msg;
+  TCanMsg tx_msg;
 
   tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
   tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_CHECKCRC;
@@ -276,7 +276,7 @@ bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
  */
 bool CANBUS_WritePage(uint8_t page)
 {
-  CANFDMessage tx_msg;
+  TCanMsg tx_msg;
 
   tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
   tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_WRITEPAGE;
@@ -297,7 +297,7 @@ bool CANBUS_WritePage(uint8_t page)
  */
 bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data)
 {
-  CANFDMessage tx_msg;
+  TCanMsg tx_msg;
 
   tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
   tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_SENDDATA;

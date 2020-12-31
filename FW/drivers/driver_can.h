@@ -4,6 +4,17 @@
 #include "defines.h"
 #include "err_codes.h"
 
+/**< Baudrates */
+enum {
+  CAN_BAUD_125K,
+  CAN_BAUD_250K,
+  CAN_BAUD_500K,
+  CAN_BAUD_1M,
+  CAN_BAUD_2M,
+  CAN_BAUD_4M,
+  CAN_BAUD_LAST
+};
+
 /**
  * \brief CAN Message Format
  */
@@ -18,9 +29,11 @@ enum can_format {
 enum can_type {
 	CAN_TYPE_DATA,  /*!< A DATA FRAME carries data from a transmitter to the
 	                    receivers.*/
-	CAN_TYPE_REMOTE /*!< A REMOTE FRAME is transmitted by a bus unit to request
+	CAN_TYPE_REMOTE, /*!< A REMOTE FRAME is transmitted by a bus unit to request
 	                     the transmission of the DATA FRAME with the same
 	                     IDENTIFIER */
+  CAN_TYPE_FD,
+  CAN_TYPE_FD_BRS
 };
 
 /**
@@ -50,6 +63,8 @@ int32_t CAN_SetRangeFilter(uint8_t index, enum can_format fmt, uint32_t start_id
 void CAN_Enable(Can *channel);
 void CAN_Disable(Can *channel);
 bool CAN_SetBaudrate(Can *channel, uint32_t nominal_baudrate, uint32_t data_baudrate);
+void CAN_SetFD(Can *channel, bool on);
+void CAN_SetBRS(Can *channel, bool on);
 void CAN_CheckBus(Can *channel);
 void CAN_Init(Can *channel);
 

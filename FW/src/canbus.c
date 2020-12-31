@@ -18,11 +18,13 @@
 #define CAN_INTHANDLER      CAN0_Handler
 #define CAN_IRQ             CAN0_IRQn
 
-/**< The queue is to be created to hold a maximum of 10 uint64_t variables */
-#define CAN_QUEUE_LENGTH    10
-#define CAN_ITEM_SIZE       sizeof(TCanMsg)
+///**< The queue is to be created to hold a maximum of 10 uint64_t variables */
+//#define CAN_QUEUE_LENGTH    10
+//#define CAN_ITEM_SIZE       sizeof(TCanMsg)
+//
+//QueueHandle_t xQueueCAN;
 
-QueueHandle_t xQueueCAN;
+TCanMsg rxMsg;
 
 /**< CAN interrupt handler */
 void CAN_INTHANDLER(void)
@@ -36,15 +38,15 @@ void CAN_INTHANDLER(void)
   {
     struct can_message msg;
     uint8_t data[64];
-    TCanMsg CanMsg;
 
     msg.data = data;
     CAN_ReadMsg(CAN_CHANNEL, &msg);
-    CanMsg.id = msg.id;
-    CanMsg.fmt = msg.fmt;
-    CanMsg.len = msg.len;
-    memcpy(CanMsg.data, msg.data, msg.len);
-    xQueueSendFromISR(xQueueCAN, &CanMsg, &xHigherPriorityTaskWoken);
+    rxMsg.id = msg.id;
+    rxMsg.fmt = msg.fmt;
+    rxMsg.len = msg.len;
+    memcpy(rxMsg.data, msg.data, msg.len);
+    //xQueueSendFromISR(xQueueCAN, &CanMsg, &xHigherPriorityTaskWoken);
+    xEventGroupSetBitsFromISR(xEventGroupCommon, EG_BIT_CAN_RX, &xHigherPriorityTaskWoken);
   }
 
 //	if (ir & CAN_IR_TC) {
@@ -73,24 +75,68 @@ void CAN_INTHANDLER(void)
   portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-bool CANBUS_Send(uint32_t Id, uint8_t *data, uint8_t datalen)
+/** \brief Send one CAN message
+ *
+ * \param [in] msg Pointer to CANFDMessage to send
+ * \param [in] ext Extended CAN ID: true
+ * \param [in] fd  CANFD message: true
+ * \param [in] brs Message with baudrate switching: true
+ * \return True if succeed
+ *
+ */
+bool CANBUS_SendMessage(uint32_t id, uint8_t *data, uint8_t datalen, bool ext, bool fd, bool brs)
 {
   struct can_message msg;
 
-  msg.id = Id;
+  msg.id = id;
   msg.type = CAN_TYPE_DATA;
   msg.data = data;
   msg.len = datalen;
-  msg.fmt  = CAN_FMT_EXTID;
+  if (ext == true)
+    msg.fmt  = CAN_FMT_EXTID;
+  else
+    msg.fmt = CAN_FMT_STDID;
+  if (fd == true)
+    msg.type = CAN_TYPE_FD;
+  else
+    msg.type = CAN_TYPE_DATA;
+  if (brs == true)
+    msg.type = CAN_TYPE_FD_BRS;
+  //CAN_SetFD(CAN_CHANNEL, fd);
+  //CAN_SetBRS(CAN_CHANNEL, brs);
   return (CAN_WriteMsg(CAN_CHANNEL, &msg) == ERR_NONE);
 }
 
-bool CANBUS_SetBaudrate(uint32_t nominal_baudrate, uint32_t data_baudrate)
+/** \brief Receive one message from CAN bus
+ *
+ * \param [out] msg Pointer to received CANFDMessage
+ * \return True if succeed
+ *
+ */
+bool CANBUS_ReceiveMessage(TCanMsg *msg)
 {
-  CAN_Disable(CAN_CHANNEL);
-  CAN_SetBaudrate(CAN_CHANNEL, nominal_baudrate, data_baudrate);
-  CAN_Enable(CAN_CHANNEL);
-  return true;
+  EventBits_t uxBits = 0;
+
+  uxBits = xEventGroupWaitBits(xEventGroupCommon, EG_BIT_CAN_RX, pdTRUE, pdFALSE, 1);
+  if ((uxBits & EG_BIT_CAN_RX) == EG_BIT_CAN_RX)
+  {
+    memcpy(msg, &rxMsg, sizeof(TCanMsg));
+    return true;
+  }
+
+  return false;
+}
+
+/** \brief Set CAN baudrate
+ *
+ * \param [in] nominal_br New nominal baudrate value
+ * \param [in] data_br New data baudrate value (CAN FD only)
+ * \return bool True if succeed
+ *
+ */
+bool CANBUS_SetBaudrate(uint32_t nominal_br, uint32_t data_br)
+{
+  return CAN_SetBaudrate(CAN_CHANNEL, nominal_br, data_br);
 }
 
 /** \brief Deinitialize CAN module
@@ -126,6 +172,7 @@ void CANBUS_Configuration(void)
   /**< Setup CAN filters */
 	//CAN_SetRangeFilter(0, CAN_FMT_EXTID, CANBUS_NOC_FILTER, CANBUS_NOC_FILTER + CANBUS_SERVO_MAX_ID);
 	//CAN_SetRangeFilter(1, CAN_FMT_EXTID, CANBUS_TMC_FILTER, CANBUS_TMC_FILTER + CANBUS_SERVO_MAX_ID);
+	CAN_SetRangeFilter(0, CAN_FMT_STDID, 0x000, 0x7ff);
 
 	CAN_Enable(CAN_CHANNEL);
 }

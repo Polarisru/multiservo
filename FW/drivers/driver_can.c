@@ -7,8 +7,11 @@
 #ifdef BOOTLOADER
   #define CAN_GCLK_SRC     GCLK_PCHCTRL_GEN_GCLK0
 #else
-  #define CAN_GCLK_SRC     GCLK_PCHCTRL_GEN_GCLK0//GCLK_PCHCTRL_GEN_GCLK2
+  #define CAN_GCLK_SRC     GCLK_PCHCTRL_GEN_GCLK2
 #endif
+
+/**< Supported baudrates */
+const uint32_t CAN_Baudrates[CAN_BAUD_LAST] = {125, 250, 500, 1000, 2000, 4000};
 
 uint8_t can_rx_fifo[CONF_CAN0_F0DS * CONF_CAN0_RXF0C_F0S];
 uint8_t can_tx_fifo[CONF_CAN0_TBDS * CONF_CAN0_TXBC_TFQS];
@@ -51,6 +54,9 @@ int32_t CAN_ReadMsg(Can *channel, struct can_message *msg)
 
 	if (f->R0.bit.RTR == 1)
 		msg->type = CAN_TYPE_REMOTE;
+
+  if (f->R1.bit.FDF == 1)
+    msg->type = CAN_TYPE_FD;
 
 	msg->len = dlc2len[f->R1.bit.DLC];
 
@@ -119,6 +125,18 @@ int32_t CAN_WriteMsg(Can *channel, struct can_message *msg)
 	{
 		f->R1.bit.DLC = 0xF;
 	}
+	if ((msg->type == CAN_TYPE_FD) || (msg->type == CAN_TYPE_FD_BRS))
+  {
+    f->R1.bit.FDF = 1;
+    if (msg->type == CAN_TYPE_FD_BRS)
+      f->R1.bit.BRS = 1;
+    else
+      f->R1.bit.BRS = 0;
+  } else
+  {
+    f->R1.bit.FDF = 0;
+    f->R1.bit.BRS = 0;
+  }
 
 	memcpy(f->data, msg->data, msg->len);
 
@@ -250,6 +268,25 @@ void CAN_Disable(Can *channel)
   channel->IR.bit.RF0N = 1;
 }
 
+/** \brief Return baudrate settings value for selected baudrate
+ *
+ * \param [in] baudrate Baudrate in kbaud
+ * \return Baudrate settings value as uint8_t
+ *
+ */
+static uint8_t CAN_GetBaudrate(uint32_t baudrate)
+{
+  uint8_t i;
+
+  for (i = 0; i < sizeof(CAN_Baudrates) / sizeof(uint32_t); i++)
+  {
+    if (baudrate == CAN_Baudrates[i])
+      return i;
+  }
+
+  return CAN_BAUD_LAST;
+}
+
 /** \brief Set baudrate
  *
  * \param [in] nominal_baudrate Nominal baudrate
@@ -257,12 +294,148 @@ void CAN_Disable(Can *channel)
  * \return bool True if succeed
  *
  */
-bool CAN_SetBaudrate(Can *channel, uint32_t nominal_baudrate, uint32_t data_baudrate)
+bool CAN_SetBaudrate(Can *channel, uint32_t nominal_br, uint32_t data_br)
 {
+  uint8_t n_br, d_br;
+  uint8_t brp, tseg1, tseg2, sjw;
+
+  n_br = CAN_GetBaudrate(nominal_br);
+  d_br = CAN_GetBaudrate(data_br);
+  if ((n_br == CAN_BAUD_LAST) || (d_br == CAN_BAUD_LAST))
+    return false;
+
+  /**< Disable CAN to allow changes */
+  CAN_Disable(channel);
+  switch (n_br)
+  {
+    case CAN_BAUD_125K:
+      brp = 8;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_250K:
+      brp = 4;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_500K:
+      brp = 2;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_1M:
+      brp = 1;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_2M:
+      brp = 1;
+      tseg1 = 5;
+      tseg2 = 2;
+      sjw = 1;
+      break;
+    case CAN_BAUD_4M:
+      brp = 1;
+      tseg1 = 2;
+      tseg2 = 1;
+      sjw = 1;
+      break;
+    default:
+      return false;
+  }
   /**< Nominal bit timing and prescaling */
-  channel->NBTP.reg = CONF_CAN0_BTP_REG;
+  channel->NBTP.reg = CAN_NBTP_NBRP(brp - 1) | CAN_NBTP_NTSEG1(tseg1 - 1) | CAN_NBTP_NTSEG2(tseg2 - 1) | CAN_NBTP_NSJW(sjw - 1);
+  switch (d_br)
+  {
+    case CAN_BAUD_125K:
+      brp = 8;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_250K:
+      brp = 4;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_500K:
+      brp = 2;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_1M:
+      brp = 1;
+      tseg1 = 11;
+      tseg2 = 4;
+      sjw = 1;
+      break;
+    case CAN_BAUD_2M:
+      brp = 1;
+      tseg1 = 5;
+      tseg2 = 2;
+      sjw = 1;
+      break;
+    case CAN_BAUD_4M:
+      brp = 1;
+      tseg1 = 2;
+      tseg2 = 1;
+      sjw = 1;
+      break;
+    default:
+      return false;
+  }
   /**< Data bit timing and prescaling */
-  channel->DBTP.reg = CONF_CAN0_DBTP_REG;
+  channel->DBTP.reg = CAN_DBTP_DBRP(brp - 1) | CAN_DBTP_DTSEG1(tseg1 - 1) | CAN_DBTP_DTSEG2(tseg2 - 1) | CAN_DBTP_DSJW(sjw - 1);
+  /**< Enable CAN to apply changes */
+  CAN_Enable(channel);
+
+  return true;
+}
+
+/** \brief Set CAN FD mode
+ *
+ * \param [in] on True for CAN FD, false otherwise
+ * \return Nothing
+ *
+ */
+void CAN_SetFD(Can *channel, bool on)
+{
+  channel->CCCR.reg |= CAN_CCCR_INIT;
+  while ((channel->CCCR.reg & CAN_CCCR_INIT) == 0);
+  channel->CCCR.reg |= CAN_CCCR_CCE;
+  if (on == true)
+    channel->CCCR.bit.FDOE = 1;
+  else
+    channel->CCCR.bit.FDOE = 0;
+	channel->CCCR.reg &= ~CAN_CCCR_CCE;
+	channel->CCCR.reg &= ~CAN_CCCR_INIT;
+	while ((channel->CCCR.reg & CAN_CCCR_INIT) != 0);
+}
+
+/** \brief Set CAN FD BRS mode
+ *
+ * \param [in] on True for BRS mode, false otherwise
+ * \return Nothing
+ *
+ */
+void CAN_SetBRS(Can *channel, bool on)
+{
+  channel->CCCR.reg |= CAN_CCCR_INIT;
+  while ((channel->CCCR.reg & CAN_CCCR_INIT) == 0);
+  channel->CCCR.reg |= CAN_CCCR_CCE;
+  if (on == true)
+    channel->CCCR.bit.BRSE = 1;
+  else
+    channel->CCCR.bit.BRSE = 0;
+	channel->CCCR.reg &= ~CAN_CCCR_CCE;
+	channel->CCCR.reg &= ~CAN_CCCR_INIT;
+	while ((channel->CCCR.reg & CAN_CCCR_INIT) != 0);
 }
 
 /** \brief Check if CAN bus is stopped and restore it

@@ -18,6 +18,9 @@ void MainTask(void *pParameters)
 {
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
+  //uint8_t counter = 0;
+  //uint8_t data[4] = {0, 1, 2, 3};
+  //uint32_t id = 0x123;
 
 	while (1)
   {
@@ -30,6 +33,23 @@ void MainTask(void *pParameters)
       /**< Increment working time counter */
       //KEELOQ_Write(0x0A, 0xFF);
       OUTPUTS_Toggle(OUTPUTS_LED2);
+
+//      counter++;
+//      switch (counter % 4)
+//      {
+//        case 0:
+//          CANBUS_SendMessage(id, data, sizeof(data), false, false, false);
+//          break;
+//        case 1:
+//          CANBUS_SendMessage(id, data, sizeof(data), true, false, false);
+//          break;
+//        case 2:
+//          CANBUS_SendMessage(id, data, sizeof(data), true, true, false);
+//          break;
+//        case 3:
+//          CANBUS_SendMessage(id, data, sizeof(data), true, true, true);
+//          break;
+//      }
     }
 	}
 }
@@ -45,13 +65,17 @@ void InitTask(void *pParameters)
 
   GPIO_Init();
   TEMP_Init();
+  DMA_Init();
 
   OUTPUTS_Configuration();
   PWMOUT_Configuration();
   PWMOUT_Enable();
   PWMOUT_SetValue(0.0f);
+  KEELOQ_Configuration();
   RS485_Configuration();
   ANALOG_Configuration();
+  CANBUS_Configuration();
+  //CANBUS_SetBaudrate(1000, 2000);
 
   OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
 

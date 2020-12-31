@@ -7,6 +7,8 @@
 
 #define ADC_MAX_VALUE       4096
 
+#define FB_VOLTAGE_ZERO     2.5f
+
 enum {
   ADC_CHANNEL_U,
   ADC_CHANNEL_I,

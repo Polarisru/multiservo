@@ -38,6 +38,13 @@
 #define CANMSG_CMD_WIDTH          6
 #define CANMSG_CMD_MASK           ((1 << CANMSG_CMD_WIDTH) - 1)
 
+#define CANMSG_PARAM_WIDTH        6
+#define CANMSG_PARAM_MASK         ((1 << CANMSG_PARAM_WIDTH) - 1)
+#define CANMSG_PARAM_VAL          0
+#define CANMSG_PARAM_MINVAL       1
+#define CANMSG_PARAM_MAXVAL       2
+#define CANMSG_PARAM_NAME         3
+
 #define CANMSG_SIGNATURE_START    0xAA55A55A
 #define CANMSG_SIGNATURE_RESET    0x12345678
 

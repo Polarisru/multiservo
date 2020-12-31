@@ -7,11 +7,16 @@
 #define KEELOQ_HEADER_LEN		  2000		  // header length in useconds
 #define KEELOQ_HEADER_MAXLEN  2600      // maximal length for KeeLoq header in useconds
 #define KEELOQ_HEADER_MINLEN  1600      // minimal length for KeeLoq header in useconds
-#define KEELOQ_BIT_MAXDIFF    40        // maximal time difference for bit recognition in useconds
-#define KEELOQ_BIT0_MAXLEN    (KEELOQ_BIT_LEN + KEELOQ_BIT_MAXDIFF)
-#define KEELOQ_BIT0_MINLEN    (KEELOQ_BIT_LEN - KEELOQ_BIT_MAXDIFF)
-#define KEELOQ_BIT1_MAXLEN    (KEELOQ_BIT_LEN * 2 + KEELOQ_BIT_MAXDIFF)
-#define KEELOQ_BIT1_MINLEN    (KEELOQ_BIT_LEN * 2 - KEELOQ_BIT_MAXDIFF)
+//#define KEELOQ_BIT_MAXDIFF    40        // maximal time difference for bit recognition in useconds
+//#define KEELOQ_BIT0_MAXLEN    (KEELOQ_BIT_LEN + KEELOQ_BIT_MAXDIFF)
+//#define KEELOQ_BIT0_MINLEN    (KEELOQ_BIT_LEN - KEELOQ_BIT_MAXDIFF)
+//#define KEELOQ_BIT1_MAXLEN    (KEELOQ_BIT_LEN * 2 + KEELOQ_BIT_MAXDIFF)
+//#define KEELOQ_BIT1_MINLEN    (KEELOQ_BIT_LEN * 2 - KEELOQ_BIT_MAXDIFF)
+
+#define KEELOQ_BIT0_MAXLEN      0x2700
+#define KEELOQ_BIT0_MINLEN      0x2400
+#define KEELOQ_BIT1_MAXLEN      0x1400
+#define KEELOQ_BIT1_MINLEN      0x1100
 
 #define KEELOQ_PACKET_LEN		  3				  // packet length
 
@@ -20,6 +25,6 @@
 //void KEELOQ_Send(uint8_t *data);
 bool KEELOQ_Write(uint8_t addr, uint8_t value);
 bool KEELOQ_Read(uint8_t addr, uint8_t *value);
-void KEELOQ_Init(void);
+void KEELOQ_Configuration(void);
 
 #endif

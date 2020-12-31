@@ -504,10 +504,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_BLS:
         /**< Start bootloader */
-//        if (BOOTLOADER_Start() == true)
-//          errMsg = parserOk;
-//        else
-//          errMsg = parserErrHw;
+        if (BOOTLOADER_Start() == true)
+          errMsg = parserOk;
+        else
+          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLQ:

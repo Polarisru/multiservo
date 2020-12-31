@@ -20,7 +20,7 @@
 				</Device>
 				<Compiler>
 					<Add option="-Wall" />
-					<Add option="-O1" />
+					<Add option="-O0" />
 					<Add option="-g3" />
 					<Add symbol="CAN_VOLZ" />
 				</Compiler>
@@ -297,11 +297,22 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\analog.h" />
+		<Unit filename="src\bootloader.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src\bootloader.h" />
 		<Unit filename="src\canbus.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\canbus.h" />
+		<Unit filename="src\canbus_amazon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\canbus_amazon.h" />
+		<Unit filename="src\canbus_volz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\canbus_volz.h" />
 		<Unit filename="src\cmd_set.h" />
 		<Unit filename="src\comm.c">
 			<Option compilerVar="CC" />

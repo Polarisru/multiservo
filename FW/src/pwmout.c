@@ -14,8 +14,6 @@
 #define PWM_MIN_USEC      1000UL
 #define PWM_MAX_USEC      2000UL
 
-#define PWM_RANGE         90 // -45°..45°
-
 /** \brief Enable PWM pin
  *
  * \return void Nothing
@@ -67,10 +65,10 @@ void PWMOUT_SetValue(float angle)
  */
 void PWMOUT_Configuration(void)
 {
-  /**< Activate output pin */
-  GPIO_ClearPin(PWM_PORT, PWM_PIN);
-  GPIO_SetDir(PWM_PORT, PWM_PIN, true);
-  GPIO_SetFunction(PWM_PORT, PWM_PIN, GPIO_PIN_FUNC_OFF);
+//  /**< Activate output pin */
+//  GPIO_ClearPin(PWM_PORT, PWM_PIN);
+//  GPIO_SetDir(PWM_PORT, PWM_PIN, true);
+//  GPIO_SetFunction(PWM_PORT, PWM_PIN, GPIO_PIN_FUNC_OFF);
 
   PWM_Init(PWM_TCC_NUM, PWM_FREQ);
 }

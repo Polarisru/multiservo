@@ -13,14 +13,14 @@
 // <i> Enable CAN FD operation
 // <id> can_cccr_fdoe
 #ifndef CONF_CAN0_CCCR_FDOE
-#define CONF_CAN0_CCCR_FDOE 0
+#define CONF_CAN0_CCCR_FDOE 1
 #endif
 
 // <q> Bit Rate Switch Enable
 // <i> Bit Rate Switch Enable
 // <id> can_cccr_brse
 #ifndef CONF_CAN0_CCCR_BRSE
-#define CONF_CAN0_CCCR_BRSE 0
+#define CONF_CAN0_CCCR_BRSE 1
 #endif
 
 // <q> Run In Standby

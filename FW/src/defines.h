@@ -34,6 +34,8 @@
 #define LINE_CRLF               "\n"
 #define LINE_SEPARATE           " - "
 
+#define M_PI     3.1416f
+
 enum CONN_MODE
 {
   CONN_MODE_PWM,
@@ -63,6 +65,8 @@ enum {
 #define SERVO_ANGLE_SCALE       180.0f    // degrees
 #define SERVO_MAX_ANGLE         170.0f    // maximal angle in degrees
 
+#define PWM_RANGE               90 // -45°..45°
+
 #define OPTIONS_RESET           0x00        // options bits
 #define OPTIONS_TERMINATION_ON  (1 << 0)
 #define OPTIONS_REVERSE_ON      (1 << 1)
@@ -76,6 +80,10 @@ enum {
 #define KEELOQ_ADDR_TEMP        0x27
 #define KEELOQ_ADDR_VOLTAGE     0x39
 #define KEELOQ_ADDR_CURRENT     0x3A
+
+#define DMA_CHANNEL_KEELOQ      0
+#define DMA_CHANNEL_IN_KEELOQ   1
+#define DMA_CHANNEL_IN_KEELOQ2  2
 
 enum {
   PARAM_TYPE_BOOL,

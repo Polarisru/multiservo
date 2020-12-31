@@ -3,7 +3,7 @@
 #include "global.h"
 #include "outputs.h"
 
-static float CONVERSION_VoltageFB;
+//static float CONVERSION_VoltageFB;
 
 /** \brief Calculate voltage from 1:2 resistor divider
  * V = ADC_Value * VREF * 2 / 4096
@@ -19,6 +19,17 @@ float CONVERSION_GetVoltage(void)
   return voltage;
 
   //return CONVERSION_VoltageFB;
+}
+
+/** \brief Get feedback position
+ *
+ * \return Servo position in degrees
+ *
+ */
+float CONVERSION_GetFeedbackPos(void)
+{
+  float flVal = CONVERSION_GetVoltage();
+  return (flVal / FB_VOLTAGE_ZERO - 1) * PWM_RANGE / 2;
 }
 
 /** \brief Calculate voltage from additional resistor divider
