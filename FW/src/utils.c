@@ -1,14 +1,3 @@
-/**
- * \file  utils.c
- * \brief Small common utilities
- * \date  14.10.2015
- * \addtogroup SourceCode
- * \{
- * \defgroup Utils Utilities
- * \brief Small common utilities
- * \{
- */
-
 #include <ctype.h>
 #include <string.h>
 #include "utils.h"
@@ -85,8 +74,3 @@ char *UTILS_StrUpr(char *s)
   }
   return s;
 }
-
-/**
- * }
- * }
- */

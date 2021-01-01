@@ -78,6 +78,7 @@ void InitTask(void *pParameters)
   //CANBUS_SetBaudrate(1000, 2000);
 
   OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
+  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
 
   //KEELOQ_Init();
 

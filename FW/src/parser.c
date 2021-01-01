@@ -1,15 +1,16 @@
 #include "driver_temp.h"
+#include "driver_wdt.h"
 #include "actions.h"
 #include "analog.h"
-#include "bootloader.h"
+//#include "bootloader.h"
 #include "canbus.h"
 //#include "comm.h"
 #include "conversion.h"
+#include "eeprom.h"
 #include "global.h"
 #include "outputs.h"
 #include "parser.h"
 #include "rs485.h"
-//#include "settings.h"
 #include "utils.h"
 #include "version.h"
 
@@ -31,7 +32,7 @@ const char parserHlpHW[] = "get hardware revision";
 // - GCI -
 const char parserCmdGCI[] = "GCI";
 const char parserHlpGCI[] = "get instant current value, A";
-const char parserOutGCI[] = "I:%04.1f";
+const char parserOutGCI[] = "I:%04.2f";
 
 // - GCP -
 const char parserCmdGCP[] = "GCP";
@@ -148,7 +149,7 @@ const char parserHlpPAUSE[] = "make pause for x msec";
 const char parserInPAUSE[]  = "%d";
 
 // - UPD -
-const char parserCmdUPD[] = "UPD";
+const char parserCmdUPD[] = "BL";
 const char parserHlpUPD[] = "start updater procedure";
 const char parserInUPD[]  = "%d";
 
@@ -396,8 +397,9 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
       case PARSER_CMD_CC:
         /**< Calibrate current (get offset) */
         intVal0 = ANALOG_GetValue(ADC_CHANNEL_I, ADC_TYPE_CURRENT);
-        //EE_CurrOffset = (uint16_t)intVal0;
-        //SETTINGS_WriteVar(&EE_CurrOffsetLow);
+        EE_CurrOffset = (uint16_t)intVal0;
+        EEPROM_SaveVariable(&EE_CurrOffset);
+        EEPROM_SaveBoth();
         errMsg = parserOk;
         break;
 
@@ -408,9 +410,15 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
+        if (flVal < 0.1f)
+        {
+          errMsg = parserErrParam;
+          break;
+        }
         flVal2 = flVal / CONVERSION_GetSupplyVoltage();
-        //EE_VoltSupplyDiv *= flVal2;
-        //SETTINGS_WriteVar(&EE_VoltSupplyDiv);
+        EE_VoltSupplyDiv *= flVal2;
+        EEPROM_SaveVariable(&EE_VoltSupplyDiv);
+        EEPROM_SaveBoth();
         errMsg = parserOk;
         break;
 
@@ -471,16 +479,16 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
         break;
 
       case PARSER_CMD_PWR:
-        /**< Set power (0 - Off, 1 - On) */
+        /**< Set power (0 - On, 1 - Off) */
         if (1 != sscanf(cmd, PARSER_Items[index].inFmt, &intVal0))
         {
           errMsg = parserErrParam;
           break;
         }
         if (intVal0 == 0)
-          OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
-        else
           OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
+        else
+          OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
         errMsg = parserOk;
         break;
 
@@ -504,10 +512,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_BLS:
         /**< Start bootloader */
-        if (BOOTLOADER_Start() == true)
-          errMsg = parserOk;
-        else
-          errMsg = parserErrHw;
+//        if (BOOTLOADER_Start() == true)
+//          errMsg = parserOk;
+//        else
+//          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLQ:
@@ -594,12 +602,8 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-//        __disable_irq();
-//        IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-//        IWDG_SetPrescaler(IWDG_Prescaler_32);
-//        IWDG_SetReload(1);
-//        IWDG_ReloadCounter();
-//        IWDG_Enable();
+        WDT_Init();
+        WDT_Enable();
         while(1);
         break;
     }

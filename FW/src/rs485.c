@@ -9,11 +9,11 @@
 #define RS485_PORT          GPIO_PORTA
 #define RS485_PIN_DIR       10
 #define RS485_PIN_TX        8
-#define RS485_PIN_RX        9
+#define RS485_PIN_RX        11
 #define RS485_PINMUX_TX     MUX_PA08D_SERCOM2_PAD0
-#define RS485_PINMUX_RX     MUX_PA09D_SERCOM2_PAD1
+#define RS485_PINMUX_RX     MUX_PA11D_SERCOM2_PAD3
 
-#define RS485_RXPO          1
+#define RS485_RXPO          3
 #define RS485_TXPO          0
 
 #define RS485_CHANNEL       SERCOM2

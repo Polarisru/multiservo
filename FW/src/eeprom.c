@@ -9,7 +9,7 @@ uint8_t EEPROM_Page[EEPROM_PAGE_SIZE];
 const eeVal_t EEPROM_Values[] =
 {
   {0x00, 2, (void*)&EE_CurrOffset,      {.word = 0}},
-  {0x02, 4, (void*)&EE_VoltSupplyDiv,   {.fl = 0.767f}}
+  {0x02, 4, (void*)&EE_VoltSupplyDiv,   {.fl = 7.67f}}
 };
 
 /** \brief Recalculate EEPROM CRC

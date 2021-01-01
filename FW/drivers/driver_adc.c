@@ -45,6 +45,8 @@ void ADC_SetChannel(uint8_t channel)
   /**< Enable ADC */
   ADC0->CTRLA.bit.ENABLE = 1;
   while (ADC0->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
+  /**< Reset ready flag */
+  ADC0->INTFLAG.bit.RESRDY = 1;
   /**< Start conversion */
   ADC0->SWTRIG.bit.START = 1;
 }

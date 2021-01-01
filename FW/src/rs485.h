@@ -13,6 +13,10 @@
 void RS485_SetBaudrate(uint32_t baudrate);
 void RS485_Disable(void);
 bool RS485_Transfer(uint8_t *tx_data, uint8_t reply, uint8_t *rx_data, uint8_t timeout);
+void RS485_DisableRxInt(void);
+void RS485_Send(uint8_t *data, uint8_t len);
+bool RS485_Receive(uint8_t *data, uint16_t len, uint16_t timeout);
+void RS485_EnableRxInt(void);
 void RS485_Configuration(void);
 
 #endif
