@@ -1,28 +1,38 @@
 {
-  "PWM": {
-	"params": [
-		"Kp": {"addr": 0x20, "dflt": 10, "min": 0, "max": 255},
-		"Kd": {"addr": 0x21, "dflt": 10, "min": 0, "max": 255}
-	]
-  },
-  "RS485": {
-	"baudrate": 115200,
-	"params": [
-		"Kp": {"addr": 0x20, "dflt": 10, "min": 0, "max": 255},
-		"Kd": {"addr": 0x21, "dflt": 10, "min": 0, "max": 255}
-	]
-  },
-  "CAN": {
-	"baudrate": 500,
-	"params": [
-		"Kp": {"addr": 0x20, "dflt": 10, "min": 0, "max": 255},
-		"Kd": {"addr": 0x21, "dflt": 10, "min": 0, "max": 255}
-	]
-  },
-  "Amazon":
-  {
-	"baudrate": [1000, 2000],
-	"params": [
-	]
-  }
+  "servo":
+  [
+	  {
+		"name": "PWM",
+		"iface": 0,
+		"params": {
+			"Kp": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kd": {"addr": "0x21", "dflt": 10, "min": 0, "max": 255}
+		}
+	  },
+	  {
+		"name": "RS485",
+		"iface": 1,
+		"baudrate": 115200,
+		"params": {
+			"Kp": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kd": {"addr": "0x21", "dflt": 10, "min": 0, "max": 255}
+		}
+	  },
+	  {
+		"name": "CAN",
+		"iface": 2,
+		"baudrate": 500,
+		"params": {
+			"Kp": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kd": {"addr": "0x21", "dflt": 10, "min": 0, "max": 255}
+		}
+	  },
+	  {
+		"name": "Amazon",
+		"iface": 3,
+		"baudrate": [1000, 2000],
+		"params": {
+		}
+	  }
+  ]
 }

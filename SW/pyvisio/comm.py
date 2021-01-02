@@ -8,9 +8,28 @@ class Communicator():
         
     def connect(self, port):
         try:
-            self.port = serial.Serial(port)
+            self.port = serial.Serial(port, baudrate=115200, bytesize=8, parity='N', stopbits=1, timeout=0.1)
+            self.send('ID')
+            line = self.read()
+            if line == 'MLS':
+                return True
+            else:
+                return False
         except (OSError, serial.SerialException):
-            pass
+            return False
+            
+    def disconnect(self):
+        self.port.close()
+        
+    def send(self, line):
+        print(f'>> {line}')
+        line = '\x1b' + line + '\r'
+        self.port.write(bytearray(line, encoding='utf-8'))
+        
+    def read(self):
+        line = self.port.readline().strip().decode('utf-8') 
+        print(f'<< {line}')
+        return line
     
     def get_ports(self):
         """ Lists serial port names
