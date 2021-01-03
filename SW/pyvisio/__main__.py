@@ -51,7 +51,8 @@ class Controller():
         pub.subscribe(self.do_power_off, 'power_off') 
         pub.subscribe(self.start_measure, 'start_measure') 
         pub.subscribe(self.stop_measure, 'stop_measure')     
-        pub.subscribe(self.select_servo, 'select_servo')         
+        pub.subscribe(self.select_servo, 'select_servo')  
+        pub.subscribe(self.write_param, 'write_param')          
     
     def change_pos(self, position):
         print(f'New pos: {position}')
@@ -61,6 +62,7 @@ class Controller():
     def do_connection(self, port):
         print(f'Connecting to {port}')
         if self.comm.connect(port) == True:
+            self.select_servo(self.servo)
             pub.sendMessage("connected")
         else:
             pub.sendMessage("conn_error")

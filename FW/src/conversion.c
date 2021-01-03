@@ -69,8 +69,6 @@ float CONVERSION_GetCurrent(uint8_t type)
     value = 0;
 
   current = (float)value * ADC_REF_VOLTAGE / ADC_MAX_VALUE / CONVERSION_IREF_RESISTANCE / CONVERSION_I_AMPLIF;
-  if (current < 0.0f)
-    current = 0.0f;
 
   return current;
 }

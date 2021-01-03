@@ -8,8 +8,8 @@ uint8_t EEPROM_Page[EEPROM_PAGE_SIZE];
 /**< This array is used to match global variables from RAM with their EEPROM representation */
 const eeVal_t EEPROM_Values[] =
 {
-  {0x00, 2, (void*)&EE_CurrOffset,      {.word = 0}},
-  {0x02, 4, (void*)&EE_VoltSupplyDiv,   {.fl = 7.67f}}
+  {0x10, 2, (void*)&EE_CurrOffset,      {.word = 0}},
+  {0x12, 4, (void*)&EE_VoltSupplyDiv,   {.fl = 7.67f}}
 };
 
 /** \brief Recalculate EEPROM CRC
