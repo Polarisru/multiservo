@@ -15,6 +15,15 @@
 		"baudrate": 115200,
 		"params": {
 			"Kp": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Ka": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kb": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kc": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kx": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Ke": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kf": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kg": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Kh": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
+			"Ki": {"addr": "0x20", "dflt": 10, "min": 0, "max": 255},
 			"Kd": {"addr": "0x21", "dflt": 10, "min": 0, "max": 255}
 		}
 	  },

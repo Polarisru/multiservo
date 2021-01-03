@@ -186,13 +186,16 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.scrollArea = QtWidgets.QScrollArea(self.verticalLayoutWidget_3)
-        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setWidgetResizable(False)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 297, 216))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_4.addWidget(self.scrollArea)
+        self.scrollLayout = QtWidgets.QVBoxLayout(self.scrollArea)
+        self.scrollArea.setWidget(self.scrollLayout.widget())
+        
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -250,9 +253,18 @@ class Ui_MainWindow(object):
         pub.subscribe(self.conn_error, 'conn_error')
         pub.subscribe(self.get_measure, 'measure')
         pub.subscribe(self.show_pos, 'show_pos')
+        pub.subscribe(self.add_param, 'add_param')
+        pub.subscribe(self.remove_params, 'remove_params')
         self.connected = False
         self.powered = False
         self.measured = False
+        
+    def show_msg(self, title, text):
+        msg = QtWidgets.QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        msg.setIcon(QtWidgets.QMessageBox.Critical)
+        x = msg.exec_()
 
     def do_connect(self):
         if self.connected:
@@ -268,7 +280,8 @@ class Ui_MainWindow(object):
         
     def conn_error(self):
         self.btnConnect.setEnabled(True)
-        self.cbPorts.setEnabled(True)        
+        self.cbPorts.setEnabled(True)
+        self.show_msg("Connection", "Port is not available!")
 
     def done_connection(self):
         self.btnConnect.setText("Disconnect")
@@ -344,3 +357,29 @@ class Ui_MainWindow(object):
         
     def show_pos(self, pos):
         self.edPosition.setText(pos)
+     
+    def clearLayout(self, layout): 
+        while layout.count(): 
+            child = layout.takeAt(0) 
+            if child.widget() is not None: 
+                child.widget().deleteLater() 
+            elif child.layout() is not None: 
+                self.clearLayout(child.layout())
+
+    def remove_params(self):
+        self.clearLayout(self.scrollLayout)
+        
+    def add_param(self, name, param):
+        param_layout = QtWidgets.QHBoxLayout()
+        label_x = QtWidgets.QLabel()
+        label_x.setText(name)
+        label_x.setFixedHeight(30)
+        param_layout.addWidget(label_x)
+        param_layout.addStretch()
+        #param_layout.addWidget(self._pause)
+        self.SpinBox = QtWidgets.QSpinBox()
+        self.SpinBox.setFixedHeight(30)
+        param_layout.addWidget(self.SpinBox)
+        self.SpinBox.setRange(param["min"], param["max"])
+        self.SpinBox.setValue(param["dflt"])
+        self.scrollLayout.addLayout(param_layout)

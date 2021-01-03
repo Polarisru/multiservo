@@ -1,11 +1,12 @@
-from gui.gui import Ui_MainWindow
+from .gui import Ui_MainWindow
 from pubsub import pub
 from PySide2.QtWidgets import *
 from PySide2.QtCore import QTimer
 import sys
-from comm import Communicator
+from .comm import Communicator
 import json
 from parse import *
+import os
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -15,6 +16,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 class Controller():
     DEFAULT_INTERVAL = 0.1
+    JSON_FILE_NAME = 'pyvisio.json'
 
     def __init__(self):
         self.comm = Communicator()
@@ -23,9 +25,15 @@ class Controller():
         self.view1 = MainWindow(None)
         for port in self.comm.get_ports():
             self.view1.add_port(port)
-        with open('pyvisio.json') as json_file:
+        dir = os.path.dirname(__file__)
+        print(dir)
+        json_name = os.path.join(dir, self.JSON_FILE_NAME)
+        self.servo = None
+        with open(json_name) as json_file:
             self.data = json.load(json_file)
             for p in self.data['servo']:
+                if self.servo is None:
+                    self.servo = p["name"]
                 self.view1.add_servo(p["name"])
         self.view1.set_minmax(-45, 45)
         self.view1.show()
@@ -93,18 +101,22 @@ class Controller():
         self.meas_timer.stop()        
         
     def select_servo(self, servo):
+        pub.sendMessage("remove_params") 
         print('Selected: ' + str(servo))
+        self.servo = servo
         for p in self.data['servo']:
             if p["name"] == servo:
                 self.comm.send(f'SI{p["iface"]}')
                 self.comm.read()
                 if "baudrate" in p:
                     if isinstance(p["baudrate"], list):
-                        baudrate = ':'.join(p["baudrate"])
+                        baudrate = ':'.join([str(i) for i in p["baudrate"]])
                     else:
                         baudrate = str(p["baudrate"])
                     self.comm.send(f'SB{baudrate}')
                     self.comm.read()
+                for param in p["params"]:
+                    pub.sendMessage("add_param", name=param, param=p["params"][param])
                 break
                 
     def get_pos(self):
@@ -115,6 +127,19 @@ class Controller():
             except:
                 pos = '--.-'
             pub.sendMessage("show_pos", pos=pos)
+            
+    def write_param(self, name, value):
+        for p in self.data['servo']:
+            if p["name"] == servo:
+                for param in p["params"]:
+                    if param == name:
+                        addr = p["params"][param]["addr"][2:]
+                        self.comm.send(f'WB{addr}:{value}')
+                        self.comm.read()
+                        break 
+                    
+    def read_param(self, name):
+        pass    
 
 def main():
     print('pubsub API version', pub.VERSION_API)

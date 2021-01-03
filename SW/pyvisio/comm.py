@@ -14,6 +14,7 @@ class Communicator():
             if line == 'MLS':
                 return True
             else:
+                self.port.close()
                 return False
         except (OSError, serial.SerialException):
             return False
