@@ -23,7 +23,8 @@ typedef struct {
   uint8_t channel;
 } TAnalogChannel;
 
-uint16_t ANALOG_GetValue(uint8_t channel, uint8_t type);
+uint16_t ANALOG_GetValueADC0(uint8_t channel, uint8_t type);
+uint16_t ANALOG_GetValueADC1(uint8_t channel, uint8_t type);
 uint16_t ANALOG_GetSpikeValue(void);
 void ANALOG_Configuration(void);
 

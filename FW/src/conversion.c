@@ -14,7 +14,7 @@ float CONVERSION_GetVoltage(void)
 {
   float voltage;
 
-  voltage = (float)ANALOG_GetValue(ADC_CHANNEL_FB, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
+  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_FB, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
 
   return voltage;
 
@@ -41,7 +41,7 @@ float CONVERSION_GetSupplyVoltage(void)
 {
   float voltage;
 
-  voltage = (float)ANALOG_GetValue(ADC_CHANNEL_U, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv/ ADC_MAX_VALUE;
+  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_U, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv/ ADC_MAX_VALUE;
 
   return voltage;
 }
@@ -62,7 +62,7 @@ float CONVERSION_GetCurrent(uint8_t type)
   if (type >= ADC_TYPE_LAST)
     return 0.0;
 
-  value = ANALOG_GetValue(ADC_CHANNEL_I, type);
+  value = ANALOG_GetValueADC1(ADC_CHANNEL_I, type);
   if (value > EE_CurrOffset)
     value -= EE_CurrOffset;
   else

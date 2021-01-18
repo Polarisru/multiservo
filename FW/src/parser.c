@@ -396,7 +396,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_CC:
         /**< Calibrate current (get offset) */
-        intVal0 = ANALOG_GetValue(ADC_CHANNEL_I, ADC_TYPE_CURRENT);
+        intVal0 = ANALOG_GetValueADC1(ADC_CHANNEL_I, ADC_TYPE_CURRENT);
         EE_CurrOffset = (uint16_t)intVal0;
         EEPROM_SaveVariable(&EE_CurrOffset);
         EEPROM_SaveBoth();
@@ -475,7 +475,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValue((uint8_t)intVal0, ADC_TYPE_CURRENT));
+        if (intVal0 == ADC_CHANNEL_I)
+          sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValueADC1((uint8_t)intVal0, ADC_TYPE_CURRENT));
+        else
+          sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValueADC0((uint8_t)intVal0, ADC_TYPE_CURRENT));
         break;
 
       case PARSER_CMD_PWR:
@@ -486,9 +489,9 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           break;
         }
         if (intVal0 == 0)
-          OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
-        else
           OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
+        else
+          OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
         errMsg = parserOk;
         break;
 

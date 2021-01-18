@@ -8,25 +8,25 @@
  * \return Nothing
  *
  */
-void ADC_Init(uint8_t ref, uint8_t resolution)
+void ADC_Init(Adc *channel, uint8_t ref, uint8_t resolution)
 {
   /**< Configure clock and power */
   MCLK->APBCMASK.reg |= MCLK_APBCMASK_ADC0;
   GCLK->PCHCTRL[ADC0_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
   /**< Reset ADC registers */
-  ADC0->CTRLA.bit.SWRST = 1;
+  channel->CTRLA.bit.SWRST = 1;
   /**< Set reference */
-  ADC0->REFCTRL.bit.REFSEL = ref;
+  channel->REFCTRL.bit.REFSEL = ref;
   /**< Set freerun mode */
-  ADC0->CTRLC.bit.FREERUN = 1;
+  channel->CTRLC.bit.FREERUN = 1;
   /**< Set resolution */
-  ADC0->CTRLC.bit.RESSEL = resolution;
+  channel->CTRLC.bit.RESSEL = resolution;
   /**< Set GND as negative ADC pin */
-  ADC0->INPUTCTRL.bit.MUXNEG = 0x18;
+  channel->INPUTCTRL.bit.MUXNEG = 0x18;
   /**< Adjusting result */
-  ADC0->AVGCTRL.reg = ADC_AVGCTRL_ADJRES(4) | ADC_AVGCTRL_SAMPLENUM_32;
+  channel->AVGCTRL.reg = ADC_AVGCTRL_ADJRES(4) | ADC_AVGCTRL_SAMPLENUM_32;
   /**< Set prescaler value */
-  ADC0->CTRLB.bit.PRESCALER = ADC_CTRLB_PRESCALER_DIV32_Val;
+  channel->CTRLB.bit.PRESCALER = ADC_CTRLB_PRESCALER_DIV32_Val;
 }
 
 /** \brief Set active ADC channel
@@ -35,20 +35,20 @@ void ADC_Init(uint8_t ref, uint8_t resolution)
  * \return Nothing
  *
  */
-void ADC_SetChannel(uint8_t channel)
+void ADC_SetChannel(Adc *channel, uint8_t input)
 {
   /**< Disable ADC */
-  ADC0->CTRLA.bit.ENABLE = 0;
-  while (ADC0->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
+  channel->CTRLA.bit.ENABLE = 0;
+  while (channel->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
   /**< Set channel */
-  ADC0->INPUTCTRL.bit.MUXPOS = channel;
+  channel->INPUTCTRL.bit.MUXPOS = channel;
   /**< Enable ADC */
-  ADC0->CTRLA.bit.ENABLE = 1;
-  while (ADC0->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
+  channel->CTRLA.bit.ENABLE = 1;
+  while (channel->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
   /**< Reset ready flag */
-  ADC0->INTFLAG.bit.RESRDY = 1;
+  channel->INTFLAG.bit.RESRDY = 1;
   /**< Start conversion */
-  ADC0->SWTRIG.bit.START = 1;
+  channel->SWTRIG.bit.START = 1;
 }
 
 /** \brief Get result status
@@ -56,9 +56,9 @@ void ADC_SetChannel(uint8_t channel)
  * \return True if ADC result is ready
  *
  */
-bool ADC_IsReady(void)
+bool ADC_IsReady(Adc *channel)
 {
-  return (ADC0->INTFLAG.bit.RESRDY == 1);
+  return (channel->INTFLAG.bit.RESRDY == 1);
 }
 
 /** \brief Get conversion result
@@ -66,7 +66,7 @@ bool ADC_IsReady(void)
  * \return Result as uint16_t
  *
  */
-uint16_t ADC_GetResult(void)
+uint16_t ADC_GetResult(Adc *channel)
 {
-  return ADC0->RESULT.reg;
+  return channel->RESULT.reg;
 }
