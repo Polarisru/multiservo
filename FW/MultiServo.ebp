@@ -328,6 +328,7 @@
 		</Unit>
 		<Unit filename="src\crc8.h" />
 		<Unit filename="src\defines.h" />
+		<Unit filename="src\drivers.h" />
 		<Unit filename="src\eeprom.c">
 			<Option compilerVar="CC" />
 		</Unit>

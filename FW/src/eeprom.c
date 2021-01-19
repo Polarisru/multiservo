@@ -1,4 +1,3 @@
-#include "driver_flash.h"
 #include "crc16.h"
 #include "eeprom.h"
 #include "global.h"

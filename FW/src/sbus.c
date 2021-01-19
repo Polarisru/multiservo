@@ -1,5 +1,3 @@
-#include "driver_gpio.h"
-#include "driver_uart.h"
 #include "outputs.h"
 #include "sbus.h"
 

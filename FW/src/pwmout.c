@@ -1,5 +1,3 @@
-#include "driver_gpio.h"
-#include "driver_pwm.h"
 #include "outputs.h"
 #include "pwmout.h"
 

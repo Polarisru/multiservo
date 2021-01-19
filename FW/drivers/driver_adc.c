@@ -41,12 +41,12 @@ void ADC_SetChannel(Adc *channel, uint8_t input)
   channel->CTRLA.bit.ENABLE = 0;
   while (channel->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
   /**< Set channel */
-  channel->INPUTCTRL.bit.MUXPOS = channel;
+  channel->INPUTCTRL.bit.MUXPOS = input;
   /**< Enable ADC */
   channel->CTRLA.bit.ENABLE = 1;
   while (channel->SYNCBUSY.reg & (ADC_SYNCBUSY_SWRST | ADC_SYNCBUSY_ENABLE));
   /**< Reset ready flag */
-  channel->INTFLAG.bit.RESRDY = 1;
+  channel->INTFLAG.reg |= ADC_INTFLAG_RESRDY;
   /**< Start conversion */
   channel->SWTRIG.bit.START = 1;
 }

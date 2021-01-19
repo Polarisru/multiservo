@@ -1,8 +1,4 @@
 #include <string.h>
-#include "err_codes.h"
-#include "driver_can.h"
-#include "driver_gpio.h"
-#include "driver_wdt.h"
 #include "canbus.h"
 #include "defines.h"
 #include "global.h"

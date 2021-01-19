@@ -1,4 +1,3 @@
-#include "driver_gpio.h"
 #include "outputs.h"
 
 /** \brief Initialize outputs module

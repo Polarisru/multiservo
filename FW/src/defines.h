@@ -10,6 +10,8 @@
 #include "samc21e18a.h"
 #include "peripheral_clk_config.h"
 
+#include "drivers.h"
+
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -84,6 +86,7 @@ enum {
 #define DMA_CHANNEL_KEELOQ      0
 #define DMA_CHANNEL_IN_KEELOQ   1
 #define DMA_CHANNEL_IN_KEELOQ2  2
+#define DMA_CHANNEL_ADC_I       3
 
 enum {
   PARAM_TYPE_BOOL,

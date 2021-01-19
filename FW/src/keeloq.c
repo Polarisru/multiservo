@@ -1,5 +1,3 @@
-#include "driver_gpio.h"
-#include "driver_dma.h"
 #include "keeloq.h"
 #include "outputs.h"
 #include "pwmout.h"

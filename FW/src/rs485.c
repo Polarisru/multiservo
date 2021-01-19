@@ -1,5 +1,3 @@
-#include "driver_gpio.h"
-#include "driver_uart.h"
 #include "crc16.h"
 #include "cmd_set.h"
 #include "defines.h"

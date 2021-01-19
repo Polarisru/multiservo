@@ -1,6 +1,3 @@
-#include "driver_dma.h"
-#include "driver_gpio.h"
-#include "driver_uart.h"
 #include "global.h"
 #include "rs232.h"
 
