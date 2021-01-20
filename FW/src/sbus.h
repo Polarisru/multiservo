@@ -21,6 +21,7 @@
 #define SBUS_MAX_DATALEN        SBUS_DATA_LEN
 
 void SBUS_Send(uint8_t *data, uint8_t len);
+void SBUS_SetChannel(uint8_t channel, uint16_t value);
 void SBUS_SendCmd(void);
 void SBUS_Enable(void);
 void SBUS_Disable(void);

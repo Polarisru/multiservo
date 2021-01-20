@@ -1,6 +1,4 @@
-#include "driver_clk.h"
-#include "driver_gpio.h"
-#include "driver_temp.h"
+#include "drivers.h"
 #include "analog.h"
 #include "canbus.h"
 #include "comm.h"
@@ -10,46 +8,39 @@
 #include "outputs.h"
 #include "pwmout.h"
 #include "rs485.h"
-
-#include "driver_dma.h"
+#include "sbus.h"
 
 /**< Main RTOS task with periodical actions */
 void MainTask(void *pParameters)
 {
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
-  //uint8_t counter = 0;
-  //uint8_t data[4] = {0, 1, 2, 3};
-  //uint32_t id = 0x123;
+  uint32_t ticks2 = 0;
+  uint8_t i;
+  uint16_t value = 0x3ff;
+
+  SBUS_Enable();
+  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
 
 	while (1)
   {
     vTaskDelay(1);
+
+    if (xTaskGetTickCount() >= ticks2)
+    {
+      ticks2 += 14;
+      for (i = 0; i < SBUS_MAX_CHANNEL; i++)
+        SBUS_SetChannel(i, value & 0x7ff);
+      //value += 0x100;
+      SBUS_SendCmd();
+    }
 
     if (xTaskGetTickCount() >= ticks)
     {
       /**< Every 1 second */
       ticks += 1000;
       /**< Increment working time counter */
-      //KEELOQ_Write(0x0A, 0xFF);
       OUTPUTS_Toggle(OUTPUTS_LED2);
-
-//      counter++;
-//      switch (counter % 4)
-//      {
-//        case 0:
-//          CANBUS_SendMessage(id, data, sizeof(data), false, false, false);
-//          break;
-//        case 1:
-//          CANBUS_SendMessage(id, data, sizeof(data), true, false, false);
-//          break;
-//        case 2:
-//          CANBUS_SendMessage(id, data, sizeof(data), true, true, false);
-//          break;
-//        case 3:
-//          CANBUS_SendMessage(id, data, sizeof(data), true, true, true);
-//          break;
-//      }
     }
 	}
 }
@@ -76,9 +67,10 @@ void InitTask(void *pParameters)
   ANALOG_Configuration();
   CANBUS_Configuration();
   //CANBUS_SetBaudrate(1000, 2000);
+  SBUS_Configuration();
 
   OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
-  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
+  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
 
   //KEELOQ_Init();
 

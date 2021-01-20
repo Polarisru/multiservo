@@ -10,6 +10,7 @@
   #include "driver_gpio.h"
   #include "driver_pwm.h"
   #include "driver_temp.h"
+  #include "driver_uart.h"
   #include "driver_vref.h"
   #include "driver_wdt.h"
 #endif

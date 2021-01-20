@@ -1,3 +1,4 @@
+#include "drivers.h"
 #include "outputs.h"
 #include "sbus.h"
 
@@ -47,10 +48,10 @@ void SBUS_SendCmd(void)
   SBUS_Data[SBUS_OFFS_CMD] = SBUS_CMD_START;
   for (i = 0; i < SBUS_MAX_CHANNEL * SBUS_DATA_BITS; i++)
   {
-    if (SBUS_Values[i / SBUS_DATA_BITS] & (i % SBUS_DATA_BITS))
+    if (SBUS_Values[i / SBUS_DATA_BITS] & (1 << (i % SBUS_DATA_BITS)))
       SBUS_Data[SBUS_OFFS_DATA + (i / 8)] |= (1 << (i % 8));
   }
-  SBUS_Data[SBUS_OFFS_FLAGS] = SBUS_Flags;
+  SBUS_Data[SBUS_OFFS_FLAGS] = 0x40;//SBUS_Flags;
   SBUS_Data[len - 1] = SBUS_CMD_STOP;
 
   SBUS_Send(SBUS_Data, len);
@@ -62,6 +63,7 @@ void SBUS_Enable(void)
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, SBUS_PINMUX_TX);
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, SBUS_PINMUX_RX);
   OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_ON);
+  OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_ON);
 }
 
 void SBUS_Disable(void)
@@ -74,5 +76,5 @@ void SBUS_Disable(void)
 void SBUS_Configuration(void)
 {
   /**< Configure UART for SBUS */
-  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, false);
+  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, true);
 }

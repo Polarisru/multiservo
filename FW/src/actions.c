@@ -168,7 +168,7 @@ bool ACTION_ReadParameter(uint8_t param, uint8_t *val)
   return false;
 }
 
-/** \brief Set working mode (PWM/RS485/CAN)
+/** \brief Set working mode (PWM/RS485/CAN/SBUS)
  *
  * \param [in] mode Working mode
  * \return True if succeed
