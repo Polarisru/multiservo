@@ -11,8 +11,19 @@
 void ADC_Init(Adc *channel, uint8_t ref, uint8_t resolution)
 {
   /**< Configure clock and power */
-  MCLK->APBCMASK.reg |= MCLK_APBCMASK_ADC0;
-  GCLK->PCHCTRL[ADC0_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  if (channel == ADC0)
+  {
+    MCLK->APBCMASK.reg |= MCLK_APBCMASK_ADC0;
+    GCLK->PCHCTRL[ADC0_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  } else
+  if (channel == ADC1)
+  {
+    MCLK->APBCMASK.reg |= MCLK_APBCMASK_ADC1;
+    GCLK->PCHCTRL[ADC1_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
+  } else
+  {
+    return;
+  }
   /**< Reset ADC registers */
   channel->CTRLA.bit.SWRST = 1;
   /**< Set reference */

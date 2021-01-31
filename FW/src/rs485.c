@@ -204,7 +204,7 @@ void RS485_Disable(void)
 void RS485_Configuration(void)
 {
   /**< Configure UART for RS485 bus */
-  UART_Init(RS485_CHANNEL, RS485_RXPO, RS485_TXPO, RS485_BAUDRATE, false);
+  UART_Init(RS485_CHANNEL, RS485_RXPO, RS485_TXPO, RS485_BAUDRATE, USART_PARITY_NONE, false);
 
   /**< configure DIR pin and TE pin */
   GPIO_ClearPin(RS485_PORT, RS485_PIN_DIR);

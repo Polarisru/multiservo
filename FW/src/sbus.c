@@ -51,7 +51,7 @@ void SBUS_SendCmd(void)
     if (SBUS_Values[i / SBUS_DATA_BITS] & (1 << (i % SBUS_DATA_BITS)))
       SBUS_Data[SBUS_OFFS_DATA + (i / 8)] |= (1 << (i % 8));
   }
-  SBUS_Data[SBUS_OFFS_FLAGS] = 0x40;//SBUS_Flags;
+  SBUS_Data[SBUS_OFFS_FLAGS] = 0x03;//SBUS_Flags;
   SBUS_Data[len - 1] = SBUS_CMD_STOP;
 
   SBUS_Send(SBUS_Data, len);
@@ -76,5 +76,5 @@ void SBUS_Disable(void)
 void SBUS_Configuration(void)
 {
   /**< Configure UART for SBUS */
-  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, true);
+  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, USART_PARITY_EVEN, true);
 }

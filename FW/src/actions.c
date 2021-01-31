@@ -1,4 +1,5 @@
 #include "actions.h"
+#include "analog.h"
 #include "canbus.h"
 #include "canbus_volz.h"
 #include "canbus_amazon.h"
@@ -17,6 +18,7 @@ bool ACTIONS_MoveToPosition(float pos)
       PWMOUT_SetValue(pos);
       return true;
     case CONN_MODE_RS485:
+      ANALOG_StartDMA();
       return RS485COMM_SetPosition(pos);
     case CONN_MODE_CAN:
       return CANBUS_SetPosition(pos);

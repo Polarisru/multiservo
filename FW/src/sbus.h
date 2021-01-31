@@ -3,7 +3,7 @@
 
 #include "defines.h"
 
-#define SBUS_CMD_START          0xF0
+#define SBUS_CMD_START          0x0F
 #define SBUS_CMD_STOP           0x00
 #define SBUS_CMD_PROG           0xF9
 

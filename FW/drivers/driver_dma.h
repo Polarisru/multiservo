@@ -3,7 +3,7 @@
 
 #include "defines.h"
 
-#define DMA_CHANNELS_NUM      3
+#define DMA_CHANNELS_NUM      4
 
 typedef struct
 {

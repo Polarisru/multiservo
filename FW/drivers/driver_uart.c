@@ -40,7 +40,7 @@
  * \return Nothing
  *
  */
-void UART_Init(Sercom *channel, uint8_t pinRXPO, uint8_t pinTXPO, uint32_t baud, bool stop2)
+void UART_Init(Sercom *channel, uint8_t pinRXPO, uint8_t pinTXPO, uint32_t baud, uint8_t parity, bool stop2)
 {
   uint64_t br = (uint64_t)65536 * (UART_GCLK_FREQ - 16 * baud) / UART_GCLK_FREQ;
 
@@ -91,11 +91,14 @@ void UART_Init(Sercom *channel, uint8_t pinRXPO, uint8_t pinTXPO, uint32_t baud,
 
 	channel->USART.CTRLA.reg =
       SERCOM_USART_CTRLA_DORD | SERCOM_USART_CTRLA_MODE(1/*USART_INT_CLK*/) |
-      SERCOM_USART_CTRLA_RXPO(pinRXPO) | SERCOM_USART_CTRLA_TXPO(pinTXPO) | SERCOM_USART_CTRLA_FORM(1); // !!!
+      SERCOM_USART_CTRLA_RXPO(pinRXPO) | SERCOM_USART_CTRLA_TXPO(pinTXPO);
+  if (parity != USART_PARITY_NONE)
+    channel->USART.CTRLA.reg |= SERCOM_USART_CTRLA_FORM(1);
 
   channel->USART.CTRLB.reg = SERCOM_USART_CTRLB_RXEN | SERCOM_USART_CTRLB_TXEN |
-      SERCOM_USART_CTRLB_CHSIZE(0/*8 bits*/);// | SERCOM_USART_CTRLB_SBMODE/*2 stop bits*/;
-
+      SERCOM_USART_CTRLB_CHSIZE(0/*8 bits*/);
+  if (parity == USART_PARITY_ODD)
+    channel->USART.CTRLB.bit.PMODE = 1;
   if (stop2)
     channel->USART.CTRLB.bit.SBMODE = 1;
 

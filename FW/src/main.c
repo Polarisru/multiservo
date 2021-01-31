@@ -17,10 +17,11 @@ void MainTask(void *pParameters)
   uint32_t ticks = 0;
   uint32_t ticks2 = 0;
   uint8_t i;
-  uint16_t value = 0x3ff;
+  uint16_t value = 0x100;
+  bool flag = true;
 
-  SBUS_Enable();
-  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
+//  SBUS_Enable();
+//  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
 
 	while (1)
   {
@@ -28,15 +29,20 @@ void MainTask(void *pParameters)
 
     if (xTaskGetTickCount() >= ticks2)
     {
-      ticks2 += 14;
-      for (i = 0; i < SBUS_MAX_CHANNEL; i++)
-        SBUS_SetChannel(i, value & 0x7ff);
-      //value += 0x100;
-      SBUS_SendCmd();
+      ticks2 += 20;
+//      for (i = 0; i < SBUS_MAX_CHANNEL; i++)
+//        SBUS_SetChannel(i, value & 0x7ff);
+//      SBUS_SendCmd();
     }
 
     if (xTaskGetTickCount() >= ticks)
     {
+//      if (flag)
+//      {
+//        value = 0x700;
+//        ANALOG_StartDMA();
+//        flag = false;
+//      }
       /**< Every 1 second */
       ticks += 1000;
       /**< Increment working time counter */

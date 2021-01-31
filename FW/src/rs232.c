@@ -83,7 +83,7 @@ void RS232_SendData(uint8_t *data, uint8_t len)
 void RS232_Configuration(void)
 {
   /**< Configure UART for RS232 bus */
-  UART_Init(RS232_CHANNEL, RS232_RXPO, RS232_TXPO, RS232_BAUDRATE, false);
+  UART_Init(RS232_CHANNEL, RS232_RXPO, RS232_TXPO, RS232_BAUDRATE, USART_PARITY_NONE, false);
 
   /**< Setup TX/RX pins */
   GPIO_SetFunction(RS232_PORT, RS232_PIN_TX, RS232_PINMUX_TX);
