@@ -334,6 +334,13 @@
               </spacer>
              </item>
              <item>
+              <widget class="QPushButton" name="btnGraph">
+               <property name="text">
+                <string>Graph</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="btnMeasure">
                <property name="text">
                 <string>Read</string>

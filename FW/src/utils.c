@@ -74,3 +74,26 @@ char *UTILS_StrUpr(char *s)
   }
   return s;
 }
+
+/** \brief Convert byte to HEX string
+ *
+ * \param [in] byte Value to convert
+ * \return HEX string
+ *
+ */
+char *UTILS_ToHex(uint8_t byte)
+{
+  static char str[3];
+
+  if ((byte>>4)>9)
+    str[0] = (byte>>4) - 10 + 'A';
+  else
+    str[0] = (byte>>4) + '0';
+  if ((byte&0x0F)>9)
+    str[1] = (byte&0x0F) - 10 + 'A';
+  else
+    str[1] = (byte&0x0F) + '0';
+  str[2] = 0;
+
+  return str;
+}

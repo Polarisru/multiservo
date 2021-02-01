@@ -40,6 +40,14 @@ uint16_t ANALOG_GetSpikeValue(void)
   return 0;
 }
 
+bool ANALOG_GetBuff(uint32_t num, uint8_t *data)
+{
+  if ((num + 1) * 8 > ANALOG_BUFF_LEN)
+    return false;
+  memcpy(data, &ANALOG_Buff[num * 8], 8);
+  return true;
+}
+
 void ANALOG_Configuration(void)
 {
   uint8_t i;

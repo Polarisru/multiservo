@@ -22,7 +22,7 @@
 #define INIT_TASK_STACK_SIZE      (200)
 #define MAIN_TASK_STACK_SIZE      (200)
 #define MONITOR_TASK_STACK_SIZE   (100)
-#define COMM_TASK_STACK_SIZE      (400)
+#define COMM_TASK_STACK_SIZE      (500)
 
 #define INIT_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 #define MAIN_TASK_PRIORITY     (tskIDLE_PRIORITY + 2)

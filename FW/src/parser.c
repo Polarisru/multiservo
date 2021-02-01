@@ -27,6 +27,12 @@ const char parserCmdHW[] = "HW";
 const char parserOutHW[] = "HW:%02d";
 const char parserHlpHW[] = "get hardware revision";
 
+// - GB -
+const char parserCmdGB[] = "GB";
+const char parserHlpGB[] = "get data from current buffer (8 bytes)";
+const char parserInGB[]  = "%d";
+const char parserOutGB[] = "%s";
+
 // - GCI -
 const char parserCmdGCI[] = "GCI";
 const char parserHlpGCI[] = "get instant current value, A";
@@ -169,6 +175,7 @@ const TParsedItem PARSER_Items[PARSER_CMD_LAST] =
   {parserCmdVN,     NULL,            parserOutVN,      parserHlpVN,     PARSER_SRC_ALL,   false},
   {parserCmdHW,     NULL,            parserOutHW,      parserHlpHW,     PARSER_SRC_ALL,   false},
 
+  {parserCmdGB,     parserInGB,      parserOutGB,      parserHlpGB,     PARSER_SRC_ALL,   false},
   {parserCmdGCI,    NULL,            parserOutGCI,     parserHlpGCI,    PARSER_SRC_ALL,   false},
   {parserCmdGCP,    NULL,            parserOutGCP,     parserHlpGCP,    PARSER_SRC_ALL,   false},
   {parserCmdGP,     NULL,            parserOutGP,      parserHlpGP,     PARSER_SRC_ALL,   false},
@@ -243,6 +250,8 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
   uint32_t intVal0, intVal1, intVal2;
   uint8_t bVal;
   float flVal, flVal2;
+  uint8_t data[8];
+  char str[32];
 
   /**< Check command and get its index */
   index = PARSER_GetIndex(PARSER_Items, cmd);
@@ -279,6 +288,24 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
       case PARSER_CMD_HW:
         /**< Get hardware revision */
         sprintf(buff, PARSER_Items[index].outFmt, VERSION_GetHW());
+        break;
+
+      case PARSER_CMD_GB:
+        /**< Get data from current buffer (8 bytes) */
+        if (sscanf(cmd, PARSER_Items[index].inFmt, &intVal0) != 1)
+        {
+          errMsg = parserErrParam;
+          break;
+        }
+        if (ANALOG_GetBuff(intVal0, data) == false)
+        {
+          errMsg = parserErrResult;
+          break;
+        }
+        str[0] = 0;
+        for (bVal = 0; bVal < 8; bVal++)
+          strcat(str, UTILS_ToHex(data[bVal]));
+        sprintf(buff, PARSER_Items[index].outFmt, str);
         break;
 
       case PARSER_CMD_GCI:

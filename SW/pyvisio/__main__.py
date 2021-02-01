@@ -7,6 +7,7 @@ from .comm import Communicator
 import json
 from parse import *
 import os
+import matplotlib.pyplot as plt
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -52,7 +53,8 @@ class Controller():
         pub.subscribe(self.start_measure, 'start_measure') 
         pub.subscribe(self.stop_measure, 'stop_measure')     
         pub.subscribe(self.select_servo, 'select_servo')  
-        pub.subscribe(self.write_param, 'write_param')          
+        pub.subscribe(self.write_param, 'write_param') 
+        pub.subscribe(self.do_graph, 'do_graph')
     
     def change_pos(self, position):
         print(f'New pos: {position}')
@@ -142,6 +144,22 @@ class Controller():
                     
     def read_param(self, name):
         pass    
+        
+    def do_graph(self):
+        i = 0
+        arr = []
+        while i < 2048 // 8:
+            self.comm.send(f'GB{i}')
+            str = self.comm.read()
+            n = 2
+            arr.extend([int(str[i:i+n], 16) for i in range(0, len(str), n)])
+            i += 1
+        x_axis = list(range(len(arr)))
+        plt.plot(x_axis, arr) #Построение графика
+        plt.xlabel(r'$x$') #Метка по оси x в формате TeX
+        plt.ylabel(r'$f(x)$') #Метка по оси y в формате TeX
+        plt.grid(True) #Сетка
+        plt.show() #Показать график               
 
 def main():
     print('pubsub API version', pub.VERSION_API)
