@@ -8,6 +8,7 @@ import json
 from parse import *
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -146,6 +147,12 @@ class Controller():
         pass    
         
     def do_graph(self):
+        t_step = 0.0001
+        max_freq = 500
+        y_min_scale = 0
+        dpi = 80
+        offset = 300
+        end = -100
         i = 0
         arr = []
         while i < 2048 // 8:
@@ -154,12 +161,45 @@ class Controller():
             n = 2
             arr.extend([int(str[i:i+n], 16) for i in range(0, len(str), n)])
             i += 1
-        x_axis = list(range(len(arr)))
-        plt.plot(x_axis, arr) #Построение графика
-        plt.xlabel(r'$x$') #Метка по оси x в формате TeX
-        plt.ylabel(r'$f(x)$') #Метка по оси y в формате TeX
-        plt.grid(True) #Сетка
-        plt.show() #Показать график               
+        x_axis = list(range(len(arr[offset:end])))
+        y = np.array(arr[offset:end])
+        t = np.linspace(0, t_step * len(x_axis), len(x_axis), endpoint=True)
+        #plt.plot(t, y)
+        #plt.xlabel('Time ($s$)')
+        #plt.ylabel('Amplitude ($Unit$)')
+        #plt.show()
+
+        hann = np.hanning(len(y))
+        #plt.plot(t, y*hann)
+        #plt.xlabel('Time ($s$)')
+        #plt.ylabel('Amplitude ($Unit$)')
+        #plt.show()
+
+        Y = np.fft.fft(y)
+        N = len(Y) // 2 + 1
+        dt = t[1] - t[0]
+        fa = 1.0 / dt # scan frequency
+        X = np.linspace(0, fa/2, N, endpoint=True)
+        out = 2.0/N*np.abs(Y[:N])
+        num_of_bars = (int)(max_freq // (fa / 2 / N))
+        #print(N, fa, num_of_bars)
+        fig = plt.figure(dpi = dpi, figsize = (800 / dpi, 400 / dpi) )
+        axes = plt.gca()
+        max_y = np.max(out[5:])
+        max_y = 1
+        axes.set_ylim([y_min_scale, max_y])
+        plt.plot(X[5:num_of_bars], out[5:num_of_bars])
+        #plt.bar(X[:num_of_bars], out[:num_of_bars], 2)
+        plt.xlabel('Frequency ($Hz$)')
+        plt.ylabel('Amplitude ($Unit$)')
+        #pre, ext = os.path.splitext(f_name)
+        #fig.savefig(pre + '.png')
+        plt.show()        
+        #plt.plot(x_axis, arr) #Построение графика
+        #plt.xlabel(r'$x$') #Метка по оси x в формате TeX
+        #plt.ylabel(r'$f(x)$') #Метка по оси y в формате TeX
+        #plt.grid(True) #Сетка
+        #plt.show() #Показать график               
 
 def main():
     print('pubsub API version', pub.VERSION_API)
