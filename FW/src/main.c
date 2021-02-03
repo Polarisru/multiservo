@@ -16,12 +16,6 @@ void MainTask(void *pParameters)
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
   uint32_t ticks2 = 0;
-  uint8_t i;
-  uint16_t value = 0x100;
-  bool flag = true;
-
-//  SBUS_Enable();
-//  OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
 
 	while (1)
   {
@@ -37,12 +31,6 @@ void MainTask(void *pParameters)
 
     if (xTaskGetTickCount() >= ticks)
     {
-//      if (flag)
-//      {
-//        value = 0x700;
-//        ANALOG_StartDMA();
-//        flag = false;
-//      }
       /**< Every 1 second */
       ticks += 1000;
       /**< Increment working time counter */
@@ -72,13 +60,10 @@ void InitTask(void *pParameters)
   RS485_Configuration();
   ANALOG_Configuration();
   CANBUS_Configuration();
-  //CANBUS_SetBaudrate(1000, 2000);
   SBUS_Configuration();
 
   OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
   OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
-
-  //KEELOQ_Init();
 
   /**< Initialize and check EEPROM */
   EEPROM_Init();
@@ -87,8 +72,9 @@ void InitTask(void *pParameters)
   xRet = xTaskCreate(MainTask, (const char *) "Main Task", MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, NULL);
   /**< Create communication task with high priority */
   xRet = xTaskCreate(COMM_Task, (const char *) "Comm Task", COMM_TASK_STACK_SIZE, NULL, COMM_TASK_PRIORITY, &xTaskComm);
-  /**< Create ADC task with lowest priority */
-  //xRet = xTaskCreate(MONITOR_Task, (const char *) "ADC Task", MONITOR_TASK_STACK_SIZE, NULL, MONITOR_TASK_PRIORITY, NULL);
+  /**< Create SBUS task with lowest priority and suspend it */
+  xRet = xTaskCreate(SBUS_Task, (const char *) "SBUS Task", SBUS_TASK_STACK_SIZE, NULL, SBUS_TASK_PRIORITY, &xTaskSbus);
+  vTaskSuspend(xTaskSbus);
 
   /**< Suspend current initialization task, is not deleted because of heap_1, dynamically memory configuration is not wished */
   //vTaskPrioritySet(NULL, tskIDLE_PRIORITY);

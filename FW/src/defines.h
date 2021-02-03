@@ -19,14 +19,14 @@
 #include "semphr.h"
 #include "event_groups.h"
 
-#define INIT_TASK_STACK_SIZE      (200)
+#define INIT_TASK_STACK_SIZE      (300)
 #define MAIN_TASK_STACK_SIZE      (200)
-#define MONITOR_TASK_STACK_SIZE   (100)
+#define SBUS_TASK_STACK_SIZE      (100)
 #define COMM_TASK_STACK_SIZE      (500)
 
 #define INIT_TASK_PRIORITY     (tskIDLE_PRIORITY + 5)
 #define MAIN_TASK_PRIORITY     (tskIDLE_PRIORITY + 2)
-#define MONITOR_TASK_PRIORITY  (tskIDLE_PRIORITY + 1)
+#define SBUS_TASK_PRIORITY     (tskIDLE_PRIORITY + 1)
 #define COMM_TASK_PRIORITY     (tskIDLE_PRIORITY + 3)
 
 #define CHAR_CR 	              '\r'
@@ -83,10 +83,14 @@ enum {
 #define KEELOQ_ADDR_VOLTAGE     0x39
 #define KEELOQ_ADDR_CURRENT     0x3A
 
-#define DMA_CHANNEL_KEELOQ      0
-#define DMA_CHANNEL_IN_KEELOQ   1
-#define DMA_CHANNEL_IN_KEELOQ2  2
-#define DMA_CHANNEL_ADC_I       3
+enum {
+  DMA_CHANNEL_KEELOQ,
+  DMA_CHANNEL_IN_KEELOQ,
+  DMA_CHANNEL_IN_KEELOQ2,
+  DMA_CHANNEL_ADC_I,
+  DMA_CHANNEL_SBUS,
+  DMA_CHANNELS_NUM
+};
 
 enum {
   PARAM_TYPE_BOOL,

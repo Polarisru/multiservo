@@ -3,8 +3,6 @@
 
 #include "defines.h"
 
-#define DMA_CHANNELS_NUM      4
-
 typedef struct
 {
   void      *dst_addr;
@@ -22,8 +20,5 @@ void DMA_SetupChannel(uint8_t channel, TDmaSettings *settings);
 void DMA_StartChannel(uint8_t channel);
 void DMA_StopChannel(uint8_t channel);
 bool DMA_IsReady(uint8_t channel);
-void DMA_InitCRC(void);
-void DMA_StartCRC(uint32_t crc_init);
-uint16_t DMA_GetCRC(void);
 
 #endif

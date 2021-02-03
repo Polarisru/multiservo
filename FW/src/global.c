@@ -10,5 +10,6 @@ int16_t  EE_CurrOffset;
 float    EE_VoltSupplyDiv;
 
 TaskHandle_t xTaskComm;
+TaskHandle_t xTaskSbus;
 
 EventGroupHandle_t xEventGroupCommon;

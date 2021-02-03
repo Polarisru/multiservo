@@ -1,13 +1,5 @@
 #include "driver_dma.h"
 
-#define DMA_CRC_TIMER             TC1
-#define DMA_CRC_TIMER_MCLK        MCLK_APBCMASK_TC1
-#define DMA_CRC_TIMER_PRESCALER   TC_CTRLA_PRESCALER_DIV64_Val
-#define DMA_CRC_TIMER_GCLK_FREQ   48000000UL
-#define DMA_CRC_TIMER_GCLK_ID     TC1_GCLK_ID
-#define DMA_CRC_TIMER_FREQ        (DMA_CRC_TIMER_GCLK_FREQ / 64)
-#define DMA_CRC_TIMER_100US_TICK  (uint8_t)(DMA_CRC_TIMER_FREQ / 100)
-
 volatile bool DMA_TransferComplete[DMA_CHANNELS_NUM];
 
 static DmacDescriptor dma_descr[DMA_CHANNELS_NUM]  __attribute__((aligned(16))) SECTION_DMAC_DESCRIPTOR;
@@ -164,63 +156,4 @@ bool DMA_IsReady(uint8_t channel)
     return true;
 
   return DMA_TransferComplete[channel];
-}
-
-/** \brief Initialize CRC module
- *
- * \param
- * \param
- * \return Nothing
- *
- */
-void DMA_InitCRC(void)
-{
-  /**< Power on timer */
-  MCLK->APBCMASK.reg |= DMA_CRC_TIMER_MCLK;
-  GCLK->PCHCTRL[DMA_CRC_TIMER_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos);
-  /**< Setup timer */
-  DMA_CRC_TIMER->COUNT8.CTRLA.reg = TC_CTRLA_SWRST;
-  while (DMA_CRC_TIMER->COUNT8.SYNCBUSY.reg & TC_SYNCBUSY_SWRST);
-  DMA_CRC_TIMER->COUNT8.CTRLA.reg |= (DMA_CRC_TIMER_PRESCALER << TC_CTRLA_PRESCALER_Pos) | TC_CTRLA_MODE_COUNT8;
-  DMA_CRC_TIMER->COUNT8.CTRLBSET.bit.DIR = 0;
-  DMA_CRC_TIMER->COUNT8.PER.reg = DMA_CRC_TIMER_100US_TICK;
-  DMA_CRC_TIMER->COUNT8.COUNT.reg = 0;
-  DMA_CRC_TIMER->COUNT8.CTRLA.reg |= (TC_CTRLA_ENABLE);
-
-  DMAC->CTRL.reg &= ~DMAC_CTRL_CRCENABLE;
-  /**< Configure the CRC engine */
-  DMAC_CRCCTRL_Type crcctrl =
-  {
-    .bit.CRCSRC = DMAC_CRCCTRL_CRCSRC_IO_Val, /* I/O interface */
-    .bit.CRCPOLY = DMAC_CRCCTRL_CRCPOLY_CRC16_Val, /* CRC-16 (CRC-CCITT)  */
-    .bit.CRCBEATSIZE = DMAC_CRCCTRL_CRCBEATSIZE_BYTE_Val, /* Byte bus access */
-  };
-  DMAC->CRCCTRL.reg = crcctrl.reg;
-}
-
-/** \brief Start CRC conversion
- *
- * \param [in] crc_init CRC initial value
- * \return Nothing
- *
- */
-void DMA_StartCRC(uint32_t crc_init)
-{
-  /**< Clear the busy bit */
-  DMAC->CRCSTATUS.bit.CRCBUSY = 1;
-  DMAC->CTRL.bit.CRCENABLE = 0;
-  /**< Initialize start CRC value for the CRC16 */
-  DMAC->CRCCHKSUM.reg = crc_init;
-  /**< Enable the CRC engine */
-  DMAC->CTRL.bit.CRCENABLE = 1;
-}
-
-/** \brief Get CRC result from DMA module
- *
- * \return CRC as uint16_t
- *
- */
-uint16_t DMA_GetCRC(void)
-{
-  return (uint16_t)DMAC->CRCCHKSUM.reg;
 }

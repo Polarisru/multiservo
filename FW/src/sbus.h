@@ -25,6 +25,7 @@ void SBUS_SetChannel(uint8_t channel, uint16_t value);
 void SBUS_SendCmd(void);
 void SBUS_Enable(void);
 void SBUS_Disable(void);
+void SBUS_Task(void *pParameters);
 void SBUS_Configuration(void);
 
 #endif
