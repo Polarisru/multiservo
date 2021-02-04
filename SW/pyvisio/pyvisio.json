@@ -42,6 +42,12 @@
 		"baudrate": [1000, 2000],
 		"params": {
 		}
+	  },
+	  {
+		"name": "SBUS",
+		"iface": 4,
+		"params": {
+		}	  
 	  }
   ]
 }

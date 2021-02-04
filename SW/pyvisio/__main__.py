@@ -9,6 +9,7 @@ from parse import *
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -82,6 +83,8 @@ class Controller():
         self.comm.read()
         self.active = True
         print('Power On')
+        time.sleep(0.2)
+        pub.sendMessage("powered")
         
     def do_power_off(self):
         self.comm.send('PWR0')
@@ -148,7 +151,7 @@ class Controller():
         
     def do_graph(self):
         t_step = 0.0001
-        max_freq = 500
+        max_freq = 2000
         y_min_scale = 0
         dpi = 80
         offset = 300
@@ -186,7 +189,7 @@ class Controller():
         fig = plt.figure(dpi = dpi, figsize = (800 / dpi, 400 / dpi) )
         axes = plt.gca()
         max_y = np.max(out[5:])
-        max_y = 1
+        max_y = 5
         axes.set_ylim([y_min_scale, max_y])
         plt.plot(X[5:num_of_bars], out[5:num_of_bars])
         #plt.bar(X[:num_of_bars], out[:num_of_bars], 2)

@@ -375,7 +375,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
             else
               errMsg = parserErrParam;
             break;
-          case CONN_MODE_UAVCAN:
+          case CONN_MODE_AMAZON:
             if (intVal2 == 1)
             {
               /**< Without baudrate switching */

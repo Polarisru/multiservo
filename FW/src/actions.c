@@ -10,27 +10,40 @@
 #include "rs485comm.h"
 #include "sbus.h"
 
+/** \brief Move servo to position
+ *
+ * \param [in] pos Position to move
+ * \return True if action succeed
+ *
+ */
 bool ACTIONS_MoveToPosition(float pos)
 {
+  bool res = true;
+
   switch (GLOBAL_ConnMode)
   {
     case CONN_MODE_PWM:
       PWMOUT_SetValue(pos);
-      return true;
+      break;
     case CONN_MODE_RS485:
-      ANALOG_StartDMA();
-      return RS485COMM_SetPosition(pos);
+      res = RS485COMM_SetPosition(pos);
+      break;
     case CONN_MODE_CAN:
-      return CANBUS_SetPosition(pos);
-    case CONN_MODE_UAVCAN:
-      return CANBUS_SetPositionAmazon(pos);
+      res = CANBUS_SetPosition(pos);
+      break;
+    case CONN_MODE_AMAZON:
+      res = CANBUS_SetPositionAmazon(pos);
+      break;
     case CONN_MODE_SBUS:
+      res = SBUS_SetPosition(pos);
       break;
     default:
       return false;
   }
 
-  return false;
+  if (res == true)
+    ANALOG_StartDMA();
+  return res;
 }
 
 bool ACTIONS_GetPosition(float *pos)
@@ -45,7 +58,7 @@ bool ACTIONS_GetPosition(float *pos)
       return RS485COMM_GetPosition(pos);
     case CONN_MODE_CAN:
       return CANBUS_GetPosition(pos);
-    case CONN_MODE_UAVCAN:
+    case CONN_MODE_AMAZON:
       return CANBUS_GetPositionAmazon(pos);
     case CONN_MODE_SBUS:
       break;
@@ -54,6 +67,13 @@ bool ACTIONS_GetPosition(float *pos)
   return false;
 }
 
+/** \brief Read byte from servo
+ *
+ * \param [in] addr Address to read from
+ * \param [out] value Pointer fo readout value
+ * \return True if succeed
+ *
+ */
 bool ACTIONS_ReadByte(uint16_t addr, uint8_t *value)
 {
   switch (GLOBAL_ConnMode)
@@ -64,7 +84,7 @@ bool ACTIONS_ReadByte(uint16_t addr, uint8_t *value)
       return RS485COMM_ReadByte(addr, value);
     case CONN_MODE_CAN:
       return CANBUS_ReadByte(addr, value);
-    case CONN_MODE_UAVCAN:
+    case CONN_MODE_AMAZON:
       break;
     case CONN_MODE_SBUS:
       break;
@@ -83,7 +103,7 @@ bool ACTIONS_WriteByte(uint16_t addr, uint8_t value)
       return RS485COMM_WriteByte(addr, value);
     case CONN_MODE_CAN:
       return CANBUS_WriteByte(addr, value);
-    case CONN_MODE_UAVCAN:
+    case CONN_MODE_AMAZON:
       break;
     case CONN_MODE_SBUS:
       break;
@@ -153,7 +173,7 @@ bool ACTION_ReadParameter(uint8_t param, uint8_t *val)
           return CANBUS_GetTemperature(val);
       }
 
-    case CONN_MODE_UAVCAN:
+    case CONN_MODE_AMAZON:
       switch (param)
       {
         case ACTION_PARAM_CURRENT:
@@ -182,6 +202,7 @@ bool ACTIONS_SetMode(uint8_t mode)
     return false;
 
   PWMOUT_Disable();
+  SBUS_Disable();
 
   GLOBAL_ConnMode = mode;
   switch (mode)
@@ -194,7 +215,10 @@ bool ACTIONS_SetMode(uint8_t mode)
       break;
     case CONN_MODE_CAN:
       break;
-    case CONN_MODE_UAVCAN:
+    case CONN_MODE_AMAZON:
+      break;
+    case CONN_MODE_UAVCAN_0:
+      /**< Have to start Node allocation server here */
       break;
     case CONN_MODE_SBUS:
       SBUS_Enable();

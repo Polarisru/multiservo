@@ -24,14 +24,21 @@ static uint16_t SBUS_Values[SBUS_MAX_CHANNEL];
 static uint8_t SBUS_Data[SBUS_MAX_DATALEN];
 static uint8_t SBUS_Flags;
 
-void SBUS_Send(uint8_t *data, uint8_t len)
-{
-  while (len-- > 0)
-  {
-    UART_SendByte(SBUS_CHANNEL, *data++);
-  }
-}
+//void SBUS_Send(uint8_t *data, uint8_t len)
+//{
+//  while (len-- > 0)
+//  {
+//    UART_SendByte(SBUS_CHANNEL, *data++);
+//  }
+//}
 
+/** \brief Set channel value
+ *
+ * \param [in] channel Number of SBUS channel
+ * \param [in] value Value to set (11 bit)
+ * \return Nothing
+ *
+ */
 void SBUS_SetChannel(uint8_t channel, uint16_t value)
 {
   if (channel >= SBUS_MAX_CHANNEL)
@@ -40,12 +47,41 @@ void SBUS_SetChannel(uint8_t channel, uint16_t value)
   SBUS_Values[channel] = value & SBUS_VALUE_MASK;
 }
 
+/** \brief Set new position to ALL channels
+ *
+ * \param [in] position Position to set
+ * \return True if succeed (always)
+ *
+ */
+bool SBUS_SetPosition(float position)
+{
+  uint8_t i;
+  uint16_t value;
+
+  if (position < SBUS_MIN_POSITION)
+    position = SBUS_MIN_POSITION;
+  if (position > SBUS_MAX_POSITION)
+    position = SBUS_MAX_POSITION;
+
+  value = (uint16_t)((position - SBUS_MIN_POSITION) * SBUS_MAX_VALUE / (SBUS_MAX_POSITION - SBUS_MIN_POSITION));
+  if (value >= SBUS_MAX_VALUE)
+    value = SBUS_MAX_VALUE - 1;
+
+  for (i = 0; i < SBUS_MAX_CHANNEL; i++)
+    SBUS_SetChannel(i, value);
+
+  return true;
+}
+
+/** \brief Send SBUS command (all servos are commanded simultaneously)
+ *
+ * \return Nothing
+ *
+ */
 void SBUS_SendCmd(void)
 {
   uint8_t i;
-  //uint8_t rest;
   uint8_t len = SBUS_DATA_LEN;
-  //uint16_t pos;
 
   memset(SBUS_Data, 0, SBUS_DATA_LEN);
   SBUS_Data[SBUS_OFFS_CMD] = SBUS_CMD_START;
@@ -61,21 +97,35 @@ void SBUS_SendCmd(void)
   DMA_StartChannel(DMA_CHANNEL_SBUS);
 }
 
+/** \brief Enable SBUS
+ *
+ * \return Nothing
+ *
+ */
 void SBUS_Enable(void)
 {
   /**< Setup TX/RX pins */
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, SBUS_PINMUX_TX);
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, SBUS_PINMUX_RX);
+  /**< Configure outputs */
   OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_ON);
   OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_ON);
+  /**< Resume SBUS task */
   vTaskResume(xTaskSbus);
 }
 
+/** \brief Disable SBUS
+ *
+ * \return Nothing
+ *
+ */
 void SBUS_Disable(void)
 {
+  /**< Disable pins */
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, GPIO_PIN_FUNC_OFF);
   GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, GPIO_PIN_FUNC_OFF);
   OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_OFF);
+  /**< Suspend SBUS task */
   vTaskSuspend(xTaskSbus);
 }
 
@@ -92,6 +142,11 @@ void SBUS_Task(void *pParameters)
   }
 }
 
+/** \brief Configure SBUS (UART, DMA)
+ *
+ * \return Nothing
+ *
+ */
 void SBUS_Configuration(void)
 {
   uint8_t i;

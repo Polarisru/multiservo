@@ -20,8 +20,13 @@
 #define SBUS_PROG_LEN           17
 #define SBUS_MAX_DATALEN        SBUS_DATA_LEN
 
-void SBUS_Send(uint8_t *data, uint8_t len);
+#define SBUS_MIN_POSITION       -45.0f
+#define SBUS_MAX_POSITION       45.0f
+#define SBUS_MAX_VALUE          (1 << SBUS_DATA_BITS)
+
+//void SBUS_Send(uint8_t *data, uint8_t len);
 void SBUS_SetChannel(uint8_t channel, uint16_t value);
+bool SBUS_SetPosition(float position);
 void SBUS_SendCmd(void);
 void SBUS_Enable(void);
 void SBUS_Disable(void);

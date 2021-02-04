@@ -249,6 +249,7 @@ class Ui_MainWindow(object):
         self.btnPower.clicked.connect(self.do_power)
         self.cbPorts.currentIndexChanged.connect(self.select_port)
         self.sldPosition.valueChanged.connect(self.change_pos)
+        self.doubleSpinBox.valueChanged.connect(self.change_pos_2)
         self.cbServo.currentIndexChanged.connect(self.select_servo)
         self.btnMeasure.clicked.connect(self.do_measure)
         self.btnGraph.clicked.connect(self.do_graph)
@@ -260,6 +261,7 @@ class Ui_MainWindow(object):
         pub.subscribe(self.show_pos, 'show_pos')
         pub.subscribe(self.add_param, 'add_param')
         pub.subscribe(self.remove_params, 'remove_params')
+        pub.subscribe(self.change_pos, 'powered')
         self.connected = False
         self.powered = False
         self.measured = False
@@ -322,6 +324,9 @@ class Ui_MainWindow(object):
         self.position = self.sldPosition.value()
         self.doubleSpinBox.setValue(self.position)
         pub.sendMessage("position_changing", position=self.position)
+    
+    def change_pos_2(self):
+        self.sldPosition.setValue(self.doubleSpinBox.value())
         
     def do_measure(self):
         if self.measured:

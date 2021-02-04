@@ -106,12 +106,6 @@ void DMA_SetupChannel(uint8_t channel, TDmaSettings *settings)
   descriptor.BTCTRL.reg = btctrlVal;
 
   memcpy(&dma_descr[channel], &descriptor, sizeof(DmacDescriptor));
-	/**< Start DMA transfer */
-//	DMA_TransferComplete[channel] = false;
-//	/**< Probably software trigger should be used to initiate transfer */
-//	if (settings->trig_src == 0)
-//    DMAC->SWTRIGCTRL.reg |= (uint32_t)(1 << channel);
-//	DMAC->CHCTRLA.reg |= DMAC_CHCTRLA_ENABLE;
 }
 
 /** \brief Start DMA transfer, channel should be already initialized
