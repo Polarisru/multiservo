@@ -48,6 +48,11 @@ bool ANALOG_GetBuff(uint32_t num, uint8_t *data)
   return true;
 }
 
+void ANALOG_FillFftBuff(uint8_t *data, uint16_t len)
+{
+  memcpy(data, &ANALOG_Buff[(ANALOG_BUFF_LEN - len) / 2], len);
+}
+
 void ANALOG_Configuration(void)
 {
   uint8_t i;

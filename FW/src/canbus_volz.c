@@ -18,14 +18,9 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
   uint8_t errors = 0;
   uint32_t ticks;
   uint32_t id;
-//  CANFDMessage tx_msg;
-//  CANFDMessage rx_msg;
   TCanMsg rx_msg;
 
   /**< Build CAN packet here */
-//  tx_msg.id = CANBUS_CAN_ID;
-//  tx_msg.len = tx_len;
-//  memcpy(tx_msg.data, tx_data, tx_len);
   id = CANBUS_CAN_ID;
 
   while (errors < CANBUS_MAX_RETRIES)
@@ -39,7 +34,7 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
     {
       if (CANBUS_ReceiveMessage(&rx_msg) == true)
       {
-        if (rx_msg.data[CANMSG_OFFS_CMD] == (tx_data[CANMSG_OFFS_CMD] | CANMSG_CMD_REPLY_BIT))
+        if (rx_msg.data[CANMSG_OFFSET_CMD] == (tx_data[CANMSG_OFFSET_CMD] | CANMSG_CMD_REPLY_BIT))
         {
           memcpy(rx_data, rx_msg.data, rx_msg.len);
           return true;
@@ -62,7 +57,7 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
  */
 bool CANBUS_SetPosition(float pos)
 {
-  int16_t val;
+  uint16_t val;
 
   if (pos < -SERVO_MAX_ANGLE)
     pos = -SERVO_MAX_ANGLE;
@@ -70,11 +65,11 @@ bool CANBUS_SetPosition(float pos)
     pos = SERVO_MAX_ANGLE;
 
 
-  val = (int16_t)(pos * SERVO_RAW_ANGLE_SCALE / SERVO_ANGLE_SCALE);
+  val = (uint16_t)((int16_t)(pos * 10)) & 0xFFF;
 
-  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_SET_POS;
-  tx_buff[CANMSG_OFFS_DATA] = (uint8_t)(val >> 8);
-  tx_buff[CANMSG_OFFS_DATA + 1] = (uint8_t)val;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_SET_POS;
+  tx_buff[CANMSG_OFFSET_DATA] = (uint8_t)val;
+  tx_buff[CANMSG_OFFSET_DATA + 1] = (uint8_t)(val >> 8);
 
   if (CANBUS_Transfer(tx_buff, 3, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
@@ -92,12 +87,12 @@ bool CANBUS_GetPosition(float *pos)
 {
   int16_t val;
 
-  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_GET_POS;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_GET_POS;
 
   if (CANBUS_Transfer(tx_buff, 1, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  val = (int16_t)(((uint16_t)CANBUS_RxBuffer[CANMSG_OFFS_DATA] << 8) + CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1]);
+  val = (int16_t)(((uint16_t)CANBUS_RxBuffer[CANMSG_OFFSET_DATA] << 8) + CANBUS_RxBuffer[CANMSG_OFFSET_DATA + 1]);
   *pos = (float)val * SERVO_ANGLE_SCALE / SERVO_RAW_ANGLE_SCALE;
 
   return true;
@@ -113,17 +108,15 @@ bool CANBUS_GetPosition(float *pos)
 bool CANBUS_ReadByte(uint16_t addr, uint8_t *value)
 {
   if (addr >= 0x100)
-  {
     return 0;
-  }
 
-  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_READ_EE;
-  tx_buff[CANMSG_OFFS_DATA] = (uint8_t)addr;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_READ_EE;
+  tx_buff[CANMSG_OFFSET_DATA] = (uint8_t)addr;
 
   if (CANBUS_Transfer(tx_buff, 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  *value = CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1];
+  *value = CANBUS_RxBuffer[CANMSG_OFFSET_DATA + 1];
 
   return true;
 }
@@ -142,9 +135,9 @@ bool CANBUS_WriteByte(uint16_t addr, uint8_t value)
     return true;
   }
 
-  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_WRITE_EE;
-  tx_buff[CANMSG_OFFS_DATA] = (uint8_t)addr;
-  tx_buff[CANMSG_OFFS_DATA + 1] = value;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_WRITE_EE;
+  tx_buff[CANMSG_OFFSET_DATA] = (uint8_t)addr;
+  tx_buff[CANMSG_OFFSET_DATA + 1] = value;
 
   if (CANBUS_Transfer(tx_buff, 3, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
@@ -161,12 +154,12 @@ bool CANBUS_WriteByte(uint16_t addr, uint8_t value)
  */
 static bool CANBUS_ReadParameter(uint8_t offset, uint8_t *value)
 {
-  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_GET_POS;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_GET_POS;
 
   if (CANBUS_Transfer(tx_buff, 1, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  *value = CANBUS_RxBuffer[CANMSG_OFFS_DATA + offset];
+  *value = CANBUS_RxBuffer[CANMSG_OFFSET_DATA + offset];
 
   return true;
 }
@@ -212,17 +205,16 @@ bool CANBUS_GetTemperature(uint8_t *value)
  */
 bool CANBUS_StartBL(void)
 {
-  TCanMsg tx_msg;
   uint32_t uval32;
 
-  tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
-  tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_STARTBL;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFSET_DATA] = FLASH_CMD_STARTBL;
   uval32 = CANMSG_SIGNATURE_START;
-  memcpy(&tx_msg.data[CANMSG_OFFS_DATA + 1], &uval32, sizeof(uint32_t));
+  memcpy(&tx_buff[CANMSG_OFFSET_DATA + 1], &uval32, sizeof(uint32_t));
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFSET_DATA] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Go to application
@@ -232,13 +224,12 @@ bool CANBUS_StartBL(void)
  */
 bool CANBUS_GoToApp(void)
 {
-  TCanMsg tx_msg;
   uint32_t uval32;
 
-  tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
-  tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_GOTOAPP;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFSET_DATA] = FLASH_CMD_GOTOAPP;
   uval32 = CANMSG_SIGNATURE_RESET;
-  memcpy(&tx_msg.data[CANMSG_OFFS_DATA + 1], &uval32, sizeof(uint32_t));
+  memcpy(&tx_buff[CANMSG_OFFSET_DATA + 1], &uval32, sizeof(uint32_t));
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), NULL, 0) == false)
     return false;
 
@@ -254,18 +245,16 @@ bool CANBUS_GoToApp(void)
  */
 bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
 {
-  TCanMsg tx_msg;
-
-  tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
-  tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_CHECKCRC;
-  tx_msg.data[CANMSG_OFFS_DATA + 1] = (uint8_t)page;
-  tx_msg.data[CANMSG_OFFS_DATA + 2] = 0;
-  tx_msg.data[CANMSG_OFFS_DATA + 3] = (uint8_t)crc;
-  tx_msg.data[CANMSG_OFFS_DATA + 4] = (uint8_t)(crc >> 8);
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFSET_DATA] = FLASH_CMD_CHECKCRC;
+  tx_buff[CANMSG_OFFSET_DATA + 1] = (uint8_t)page;
+  tx_buff[CANMSG_OFFSET_DATA + 2] = 0;
+  tx_buff[CANMSG_OFFSET_DATA + 3] = (uint8_t)crc;
+  tx_buff[CANMSG_OFFSET_DATA + 4] = (uint8_t)(crc >> 8);
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) + sizeof(uint16_t) * 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFSET_DATA] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Write one page to Flash
@@ -276,16 +265,14 @@ bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
  */
 bool CANBUS_WritePage(uint8_t page)
 {
-  TCanMsg tx_msg;
-
-  tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
-  tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_WRITEPAGE;
-  tx_msg.data[CANMSG_OFFS_DATA + 1] = (uint8_t)page;
-  tx_msg.data[CANMSG_OFFS_DATA + 2] = 0;
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFSET_DATA] = FLASH_CMD_WRITEPAGE;
+  tx_buff[CANMSG_OFFSET_DATA + 1] = (uint8_t)page;
+  tx_buff[CANMSG_OFFSET_DATA + 2] = 0;
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) + sizeof(uint16_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFSET_DATA] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Write data to memory buffer of the bootloader
@@ -297,14 +284,12 @@ bool CANBUS_WritePage(uint8_t page)
  */
 bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data)
 {
-  TCanMsg tx_msg;
-
-  tx_msg.data[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
-  tx_msg.data[CANMSG_OFFS_DATA] = FLASH_CMD_SENDDATA;
-  tx_msg.data[CANMSG_OFFS_DATA + 1] = pos;
-  memcpy(&tx_msg.data[CANMSG_OFFS_DATA + 1], data, sizeof(uint32_t));
+  tx_buff[CANMSG_OFFSET_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFSET_DATA] = FLASH_CMD_SENDDATA;
+  tx_buff[CANMSG_OFFSET_DATA + 1] = pos;
+  memcpy(&tx_buff[CANMSG_OFFSET_DATA + 1], data, sizeof(uint32_t));
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFSET_DATA] == CANMSG_ANSWER_OK_SIGN);
 }

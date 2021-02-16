@@ -5,12 +5,18 @@
 #include "canbus.h"
 #include "conversion.h"
 #include "eeprom.h"
+#include "fix_fft.h"
 #include "global.h"
 #include "outputs.h"
 #include "parser.h"
 #include "rs485.h"
 #include "utils.h"
 #include "version.h"
+
+#define ADC_SAMPLES   256
+uint8_t fft_data[ADC_SAMPLES];
+int8_t im[ADC_SAMPLES];
+
 
 // - ID -
 const char parserCmdID[] = "ID";
@@ -72,6 +78,10 @@ const char parserInSB[]  = "%d:%d";
 const char parserCmdSI[] = "SI";
 const char parserHlpSI[] = "set interface type (0 - PWM, 1 - RS485, 2 - CAN, 3 - AM)";
 const char parserInSI[]  = "%1d";
+
+// - DF -
+const char parserCmdDF[] = "DF";
+const char parserHlpDF[] = "do FFT";
 
 // - DP -
 const char parserCmdDP[] = "DP";
@@ -186,6 +196,7 @@ const TParsedItem PARSER_Items[PARSER_CMD_LAST] =
   {parserCmdSB,     parserInSB,      NULL,             parserHlpSB,     PARSER_SRC_ALL,   false},
   {parserCmdSI,     parserInSI,      NULL,             parserHlpSI,     PARSER_SRC_ALL,   false},
 
+  {parserCmdDF,     NULL,            NULL,             parserHlpDF,     PARSER_SRC_ALL,   false},
   {parserCmdDP,     parserInDP,      NULL,             parserHlpDP,     PARSER_SRC_ALL,   false},
 
   {parserCmdCC,     NULL,            NULL,             parserHlpCC,     PARSER_SRC_ALL,   false},
@@ -401,6 +412,13 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
+        errMsg = parserOk;
+        break;
+
+      case PARSER_CMD_DF:
+        ANALOG_FillFftBuff(fft_data, ADC_SAMPLES);
+        memset(im, 0, sizeof(im));
+        fix_fft(fft_data, im, 8, false);
         errMsg = parserOk;
         break;
 

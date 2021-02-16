@@ -297,6 +297,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\analog.h" />
+		<Unit filename="src\bootloader.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src\bootloader.h" />
 		<Unit filename="src\canbus.c">
 			<Option compilerVar="CC" />
@@ -306,6 +309,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\canbus_amazon.h" />
+		<Unit filename="src\canbus_meteor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\canbus_meteor.h" />
 		<Unit filename="src\canbus_volz.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -333,6 +340,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\eeprom.h" />
+		<Unit filename="src\fix_fft.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\fix_fft.h" />
 		<Unit filename="src\global.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -374,6 +385,9 @@
 		</Unit>
 		<Unit filename="src\sbus.h" />
 		<Unit filename="src\uavcan.h" />
+		<Unit filename="src\uavcan_v0.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src\utils.c">
 			<Option compilerVar="CC" />
 		</Unit>

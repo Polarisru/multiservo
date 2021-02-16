@@ -28,6 +28,7 @@ uint16_t ANALOG_GetValueADC1(uint8_t channel, uint8_t type);
 void ANALOG_StartDMA(void);
 uint16_t ANALOG_GetSpikeValue(void);
 bool ANALOG_GetBuff(uint32_t num, uint8_t *data);
+void ANALOG_FillFftBuff(uint8_t *data, uint16_t len);
 void ANALOG_Configuration(void);
 
 #endif

@@ -45,26 +45,6 @@ void CAN_INTHANDLER(void)
     xEventGroupSetBitsFromISR(xEventGroupCommon, EG_BIT_CAN_RX, &xHigherPriorityTaskWoken);
   }
 
-//	if (ir & CAN_IR_TC) {
-//		//dev->cb.tx_done(dev);
-//	}
-//
-//	if (ir & CAN_IR_BO) {
-//		//dev->cb.irq_handler(dev, CAN_IRQ_BO);
-//	}
-//
-//	if (ir & CAN_IR_EW) {
-//		//dev->cb.irq_handler(dev, CAN_IRQ_EW);
-//	}
-//
-//	if (ir & CAN_IR_EP) {
-//		//dev->cb.irq_handler(dev, hri_can_get_PSR_EP_bit(dev->hw) ? CAN_IRQ_EP : CAN_IRQ_EA);
-//	}
-//
-//	if (ir & CAN_IR_RF0L) {
-//		//dev->cb.irq_handler(dev, CAN_IRQ_DO);
-//	}
-
 	CAN_CHANNEL->IR.reg = ir;
 
   /**< Now the buffer is empty we can switch context if necessary */
@@ -98,8 +78,6 @@ bool CANBUS_SendMessage(uint32_t id, uint8_t *data, uint8_t datalen, bool ext, b
     msg.type = CAN_TYPE_DATA;
   if (brs == true)
     msg.type = CAN_TYPE_FD_BRS;
-  //CAN_SetFD(CAN_CHANNEL, fd);
-  //CAN_SetBRS(CAN_CHANNEL, brs);
   return (CAN_WriteMsg(CAN_CHANNEL, &msg) == ERR_NONE);
 }
 

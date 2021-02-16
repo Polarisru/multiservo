@@ -3,6 +3,7 @@
 #include "canbus.h"
 #include "canbus_volz.h"
 #include "canbus_amazon.h"
+#include "canbus_meteor.h"
 #include "conversion.h"
 #include "global.h"
 #include "keeloq.h"
@@ -37,11 +38,14 @@ bool ACTIONS_MoveToPosition(float pos)
     case CONN_MODE_SBUS:
       res = SBUS_SetPosition(pos);
       break;
+    case CONN_MODE_METEOR:
+      return CANBUS_SetPositionMeteor(pos);
     default:
       return false;
   }
 
   if (res == true)
+    /**< Start fast current measurement */
     ANALOG_StartDMA();
   return res;
 }
@@ -62,6 +66,8 @@ bool ACTIONS_GetPosition(float *pos)
       return CANBUS_GetPositionAmazon(pos);
     case CONN_MODE_SBUS:
       break;
+    case CONN_MODE_METEOR:
+      return CANBUS_GetPositionMeteor(pos);
   }
 
   return false;
@@ -88,6 +94,8 @@ bool ACTIONS_ReadByte(uint16_t addr, uint8_t *value)
       break;
     case CONN_MODE_SBUS:
       break;
+    case CONN_MODE_METEOR:
+      return CANBUS_ReadByteMeteor(addr, value);
   }
 
   return false;
@@ -107,6 +115,8 @@ bool ACTIONS_WriteByte(uint16_t addr, uint8_t value)
       break;
     case CONN_MODE_SBUS:
       break;
+    case CONN_MODE_METEOR:
+      return CANBUS_WriteByteMeteor(addr, value);
   }
 
   return false;
@@ -222,6 +232,8 @@ bool ACTIONS_SetMode(uint8_t mode)
       break;
     case CONN_MODE_SBUS:
       SBUS_Enable();
+      break;
+    case CONN_MODE_METEOR:
       break;
   }
 

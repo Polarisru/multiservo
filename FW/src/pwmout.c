@@ -8,7 +8,7 @@
 #define PWM_TCC_NUM       TCC2
 #define PWM_CHANNEL_NUM   0
 
-#define PWM_FREQ          200UL
+#define PWM_FREQ          100UL
 #define PWM_MIN_USEC      1000UL
 #define PWM_MAX_USEC      2000UL
 
@@ -63,10 +63,5 @@ void PWMOUT_SetValue(float angle)
  */
 void PWMOUT_Configuration(void)
 {
-//  /**< Activate output pin */
-//  GPIO_ClearPin(PWM_PORT, PWM_PIN);
-//  GPIO_SetDir(PWM_PORT, PWM_PIN, true);
-//  GPIO_SetFunction(PWM_PORT, PWM_PIN, GPIO_PIN_FUNC_OFF);
-
   PWM_Init(PWM_TCC_NUM, PWM_FREQ);
 }

@@ -15,19 +15,10 @@ void MainTask(void *pParameters)
 {
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
-  uint32_t ticks2 = 0;
 
 	while (1)
   {
     vTaskDelay(1);
-
-    if (xTaskGetTickCount() >= ticks2)
-    {
-      ticks2 += 20;
-//      for (i = 0; i < SBUS_MAX_CHANNEL; i++)
-//        SBUS_SetChannel(i, value & 0x7ff);
-//      SBUS_SendCmd();
-    }
 
     if (xTaskGetTickCount() >= ticks)
     {
