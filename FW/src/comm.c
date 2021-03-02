@@ -60,6 +60,8 @@ void COMM_Task(void *pParameters)
   /**< Configure JDY-08 module */
   JDY08_Configuration();
 
+  JDY08_SetName("ServoTester");
+
   while (1)
   {
     /**< Wait for notification from the RX interrupt */

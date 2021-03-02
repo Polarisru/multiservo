@@ -44,7 +44,7 @@ void RS232_INTHANDLER(void)
 
     ch = RS232_CHANNEL->USART.DATA.reg & 0x7F;
 
-    if (ch == CHAR_NL)
+    if (ch == CHAR_CR)
       return;
 
     RS232_RxBuffer[RS232_RxHead++] = ch;
@@ -55,7 +55,7 @@ void RS232_INTHANDLER(void)
       return;
     }
 
-    if (ch == CHAR_CR)
+    if (ch == CHAR_NL)
     {
       RS232_RxBuffer[RS232_RxHead] = 0;
       RS232_RxHead = 0;
