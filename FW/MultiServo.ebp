@@ -348,6 +348,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\global.h" />
+		<Unit filename="src\jdy08.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\jdy08.h" />
 		<Unit filename="src\keeloq.c">
 			<Option compilerVar="CC" />
 		</Unit>

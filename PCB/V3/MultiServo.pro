@@ -1,4 +1,4 @@
-update=21/01/2021 16:21:12
+update=02.03.2021 10:20:21
 version=1
 last_client=kicad
 [general]
@@ -253,7 +253,7 @@ dPairViaGap=0.25
 [schematic_editor]
 version=1
 PageLayoutDescrFile=C:/Git/kicad-library/VolzFrame.kicad_wks
-PlotDirectoryName=
+PlotDirectoryName=./
 SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=Pcbnew

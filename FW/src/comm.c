@@ -1,13 +1,15 @@
 #include <ctype.h>
 #include <string.h>
 #include "comm.h"
+#include "jdy08.h"
 #include "parser.h"
 #include "rs232.h"
 #include "utils.h"
 
 const char commHelp[] = "HELP";
 
-static bool COMM_Secured = false;
+static bool COMM_Secured;
+static uint8_t COMM_Mode;
 
 /** \brief Send answer
  *
@@ -33,6 +35,14 @@ void COMM_SetSecured(bool on)
   COMM_Secured = on;
 }
 
+void COMM_SetMode(uint8_t mode)
+{
+  if (mode >= COMM_MODE_LAST)
+    return;
+
+  COMM_Mode = mode;
+}
+
 /** \brief RTOS task for processing UART connection
  */
 void COMM_Task(void *pParameters)
@@ -44,6 +54,11 @@ void COMM_Task(void *pParameters)
 
   /**< Configure UART connection */
   RS232_Configuration();
+  /**< Initial settings */
+  COMM_Secured = false;
+  COMM_Mode = COMM_MODE_NORMAL;
+  /**< Configure JDY-08 module */
+  JDY08_Configuration();
 
   while (1)
   {
@@ -69,26 +84,32 @@ void COMM_Task(void *pParameters)
 
     UTILS_StrUpr(cmd);
 
-    if (0 == strncmp(cmd, commHelp, strlen(commHelp)))
+    if (COMM_Mode == COMM_MODE_AT)
     {
-      /**< It is a HELP command, show help screen */
-      for (pos = 0; pos < PARSER_CMD_LAST; pos++)
-      {
-        if ((PARSER_Items[pos].source & PARSER_SRC_COMM) && ((PARSER_Items[pos].secure == false) || (COMM_Secured == true)))
-        {
-          /**< Show only communication commands */
-          strcpy(buff, PARSER_Items[pos].itemStr);
-          strcat(buff, LINE_SEPARATE);
-          strcat(buff, PARSER_Items[pos].help);
-          strcat(buff, LINE_CRLF);
-          COMM_Send(buff);
-        }
-      }
+
     } else
     {
-      /**< It is not a HELP command, go to parser */
-      PARSER_Process(cmd, buff, PARSER_SRC_COMM);
-      COMM_Send(buff);
+      if (0 == strncmp(cmd, commHelp, strlen(commHelp)))
+      {
+        /**< It is a HELP command, show help screen */
+        for (pos = 0; pos < PARSER_CMD_LAST; pos++)
+        {
+          if ((PARSER_Items[pos].source & PARSER_SRC_COMM) && ((PARSER_Items[pos].secure == false) || (COMM_Secured == true)))
+          {
+            /**< Show only communication commands */
+            strcpy(buff, PARSER_Items[pos].itemStr);
+            strcat(buff, LINE_SEPARATE);
+            strcat(buff, PARSER_Items[pos].help);
+            strcat(buff, LINE_CRLF);
+            COMM_Send(buff);
+          }
+        }
+      } else
+      {
+        /**< It is not a HELP command, go to parser */
+        PARSER_Process(cmd, buff, PARSER_SRC_COMM);
+        COMM_Send(buff);
+      }
     }
   }
 }

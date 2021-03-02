@@ -80,6 +80,17 @@ void RS232_SendData(uint8_t *data, uint8_t len)
     UART_SendByte(RS232_CHANNEL, *data++);
 }
 
+/** \brief Set RS232 baudrate
+ *
+ * \param [in] baudrate Baudrate value to set
+ * \return Nothing
+ *
+ */
+void RS232_SetBaudrate(uint32_t baudrate)
+{
+  UART_SetBaudrate(RS232_CHANNEL, baudrate);
+}
+
 void RS232_Configuration(void)
 {
   /**< Configure UART for RS232 bus */
