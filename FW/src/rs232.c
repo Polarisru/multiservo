@@ -80,6 +80,16 @@ void RS232_SendData(uint8_t *data, uint8_t len)
     UART_SendByte(RS232_CHANNEL, *data++);
 }
 
+/** \brief Reset Rx queue
+ *
+ * \return Nothing
+ *
+ */
+void RS232_ResetRx(void)
+{
+  RS232_RxHead = 0;
+}
+
 /** \brief Set RS232 baudrate
  *
  * \param [in] baudrate Baudrate value to set

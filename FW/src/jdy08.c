@@ -10,7 +10,7 @@ const char JDY08_NL[] = "\r\n";
 const char JDY08_CMD_AT[] = "AT";
 const char JDY08_CMD_NAME[] = "AT+NAME%s";
 
-const char JDY08_ANS_OK[] = "OK";
+const char JDY08_ANS_OK[] = "+OK";
 
 const char JDY08_NAME[] = "ServoTester";
 
@@ -26,6 +26,7 @@ tAtCmd JDY08_cmdSetName[] = {
 void JDY08_SendCmd(char *cmd)
 {
   uint8_t len = strlen(cmd);
+  RS232_ResetRx();
   RS232_SendData((uint8_t*)cmd, len);
 }
 

@@ -25,7 +25,7 @@ void MainTask(void *pParameters)
       /**< Every 1 second */
       ticks += 1000;
       /**< Increment working time counter */
-      OUTPUTS_Toggle(OUTPUTS_LED2);
+      OUTPUTS_Toggle(OUTPUTS_LED1);
     }
 	}
 }
@@ -53,7 +53,6 @@ void InitTask(void *pParameters)
   CANBUS_Configuration();
   SBUS_Configuration();
 
-  OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
   OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
 
   /**< Initialize and check EEPROM */

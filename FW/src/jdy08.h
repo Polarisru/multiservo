@@ -15,6 +15,7 @@ typedef struct
   uint16_t delay;
 } tAtCmd;
 
+bool JDY08_SetName(char *name);
 void JDY08_Configuration(void);
 
 #endif
