@@ -57,6 +57,14 @@ enum {
   ADC_TYPE_LAST
 };
 
+enum {
+  MOTOR_MOVE_NORMAL,
+  MOTOR_MOVE_CW,
+  MOTOR_MOVE_CCW,
+  MOTOR_MOVE_FREE,
+  MOTOR_MOVE_LAST
+};
+
 #define UPD_PASSWORD            1234
 #define PASSWORD_SECURED        1234
 

@@ -74,6 +74,11 @@ const char parserCmdSB[] = "SB";
 const char parserHlpSB[] = "set baudrate for motor communication";
 const char parserInSB[]  = "%d:%d";
 
+// - SID -
+const char parserCmdSID[] = "SID";
+const char parserHlpSID[] = "set ID for bus protocols";
+const char parserInSID[]  = "%d";
+
 // - SI -
 const char parserCmdSI[] = "SI";
 const char parserHlpSI[] = "set interface type (0 - PWM, 1 - RS485, 2 - CAN, 3 - AM)";
@@ -194,6 +199,7 @@ const TParsedItem PARSER_Items[PARSER_CMD_LAST] =
   {parserCmdGU,     NULL,            parserOutGU,      parserHlpGU,     PARSER_SRC_ALL,   false},
 
   {parserCmdSB,     parserInSB,      NULL,             parserHlpSB,     PARSER_SRC_ALL,   false},
+  {parserCmdSID,    parserInSID,     NULL,             parserHlpSID,    PARSER_SRC_ALL,   false},
   {parserCmdSI,     parserInSI,      NULL,             parserHlpSI,     PARSER_SRC_ALL,   false},
 
   {parserCmdDF,     NULL,            NULL,             parserHlpDF,     PARSER_SRC_ALL,   false},
@@ -398,6 +404,16 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
               errMsg = parserErrParam;
             break;
         }
+        break;
+
+      case PARSER_CMD_SID:
+        /**< Set ID for bus protocols */
+        if (1 != sscanf(cmd, PARSER_Items[index].inFmt, &intVal0))
+        {
+          errMsg = parserErrParam;
+          break;
+        }
+        errMsg = parserOk;
         break;
 
       case PARSER_CMD_SI:
