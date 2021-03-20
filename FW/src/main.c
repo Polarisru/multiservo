@@ -9,6 +9,7 @@
 #include "pwmout.h"
 #include "rs485.h"
 #include "sbus.h"
+#include "serial.h"
 
 /**< Main RTOS task with periodical actions */
 void MainTask(void *pParameters)
@@ -16,16 +17,21 @@ void MainTask(void *pParameters)
   (void) pParameters;   /* to quiet warnings */
   uint32_t ticks = 0;
 
+  GLOBAL_PowerOn = false;
+
 	while (1)
   {
-    vTaskDelay(1);
+    vTaskDelay(pdMS_TO_TICKS(1));
 
     if (xTaskGetTickCount() >= ticks)
     {
-      /**< Every 1 second */
-      ticks += 1000;
-      /**< Increment working time counter */
-      OUTPUTS_Toggle(OUTPUTS_LED1);
+      /**< Every 500 milliseconds, increment working time counter */
+      ticks += pdMS_TO_TICKS(500);
+      /**< Toggle power LED if power is not applied */
+      if (GLOBAL_PowerOn == false)
+        OUTPUTS_Toggle(OUTPUTS_LED1);
+      else
+        OUTPUTS_Switch(OUTPUTS_LED1, OUTPUTS_SWITCH_ON);
     }
 	}
 }
@@ -51,6 +57,7 @@ void InitTask(void *pParameters)
   RS485_Configuration();
   ANALOG_Configuration();
   CANBUS_Configuration();
+  SERIAL_Configuration();
   SBUS_Configuration();
 
   OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);

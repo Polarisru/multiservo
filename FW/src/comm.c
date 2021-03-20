@@ -57,10 +57,12 @@ void COMM_Task(void *pParameters)
   /**< Initial settings */
   COMM_Secured = false;
   COMM_Mode = COMM_MODE_NORMAL;
+  #ifdef DEF_JDY
   /**< Configure JDY-08 module */
   JDY08_Configuration();
-
+  /**< Set Bluetooth name */
   JDY08_SetName("ServoTester");
+  #endif
 
   while (1)
   {

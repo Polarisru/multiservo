@@ -413,7 +413,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-        errMsg = parserOk;
+        if (ACTIONS_SetId((uint8_t)intVal0) == true)
+          errMsg = parserOk;
+        else
+          errMsg = parserErrParam;
         break;
 
       case PARSER_CMD_SI:
@@ -548,9 +551,14 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           break;
         }
         if (intVal0 == 0)
+        {
           OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
-        else
+          GLOBAL_PowerOn = false;
+        } else
+        {
           OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
+          GLOBAL_PowerOn = true;
+        }
         errMsg = parserOk;
         break;
 

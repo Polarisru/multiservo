@@ -2,19 +2,9 @@
 #include "global.h"
 #include "outputs.h"
 #include "sbus.h"
-
-#define SBUS_PORT          GPIO_PORTA
-#define SBUS_PIN_TX        0
-#define SBUS_PIN_RX        1
-#define SBUS_PINMUX_TX     MUX_PA00D_SERCOM1_PAD0
-#define SBUS_PINMUX_RX     MUX_PA01D_SERCOM1_PAD1
-
-#define SBUS_RXPO          1
-#define SBUS_TXPO          0
+#include "serial.h"
 
 #define SBUS_CHANNEL       SERCOM1
-#define SBUS_INTHANDLER    SERCOM1_Handler
-#define SBUS_IRQ           SERCOM1_IRQn
 
 #define SBUS_DMA_TRIG      SERCOM1_DMAC_ID_TX
 
@@ -105,8 +95,7 @@ void SBUS_SendCmd(void)
 void SBUS_Enable(void)
 {
   /**< Setup TX/RX pins */
-  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, SBUS_PINMUX_TX);
-  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, SBUS_PINMUX_RX);
+  SERIAL_Enable();
   /**< Configure outputs */
   OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_ON);
   OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_ON);
@@ -122,8 +111,7 @@ void SBUS_Enable(void)
 void SBUS_Disable(void)
 {
   /**< Disable pins */
-  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_TX, GPIO_PIN_FUNC_OFF);
-  GPIO_SetFunction(SBUS_PORT, SBUS_PIN_RX, GPIO_PIN_FUNC_OFF);
+  SERIAL_Disable();
   OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_OFF);
   /**< Suspend SBUS task */
   vTaskSuspend(xTaskSbus);
@@ -137,7 +125,7 @@ void SBUS_Task(void *pParameters)
 
   while (1)
   {
-    vTaskDelay(20);
+    vTaskDelay(pdMS_TO_TICKS(20));
     SBUS_SendCmd();
   }
 }
@@ -156,8 +144,6 @@ void SBUS_Configuration(void)
     SBUS_Values[i] = 0;
   SBUS_Flags = 0x03;
 
-  /**< Configure UART for SBUS */
-  UART_Init(SBUS_CHANNEL, SBUS_RXPO, SBUS_TXPO, SBUS_BAUDRATE, USART_PARITY_EVEN, true);
   /**< Configure DMA channel for SBUS transmission */
   DmaSett.beat_size = DMAC_BTCTRL_BEATSIZE_BYTE_Val;
   DmaSett.trig_src = SBUS_DMA_TRIG;

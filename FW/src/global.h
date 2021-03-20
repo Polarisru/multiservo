@@ -6,7 +6,8 @@
 /**< List of global variables */
 uint32_t GLOBAL_Baudrate;
 uint8_t  GLOBAL_ConnMode;
-float GLOBAL_PeakCurrent;
+float    GLOBAL_PeakCurrent;
+bool     GLOBAL_PowerOn;
 
 /**< EEPROM variables with default values */
 int16_t  EE_CurrOffset;

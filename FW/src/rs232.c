@@ -90,6 +90,39 @@ void RS232_ResetRx(void)
   RS232_RxHead = 0;
 }
 
+/** \brief Enable Rx interrupt for RS232
+ *
+ * \return void
+ *
+ */
+void RS232_EnableRxInt(void)
+{
+  NVIC_EnableIRQ(RS232_IRQ);
+}
+
+/** \brief Disable Rx interrupt for RS232
+ *
+ * \return void
+ *
+ */
+void RS232_DisableRxInt(void)
+{
+  NVIC_DisableIRQ(RS232_IRQ);
+}
+
+/** \brief Receive data from RS232 to buffer
+ *
+ * \param [out] data Pointer to data buffer
+ * \param [in] size Length of data
+ * \param [in] timeout Timeout in ms
+ * \return True if succeed
+ *
+ */
+bool UART_Receive(uint8_t *data, uint16_t size, uint16_t timeout)
+{
+  return true;
+}
+
 /** \brief Set RS232 baudrate
  *
  * \param [in] baudrate Baudrate value to set

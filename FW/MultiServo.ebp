@@ -22,7 +22,6 @@
 					<Add option="-Wall" />
 					<Add option="-O0" />
 					<Add option="-g3" />
-					<Add symbol="CAN_VOLZ" />
 				</Compiler>
 				<Assembler>
 					<Add option="-Wa,--gdwarf-2" />
@@ -48,7 +47,58 @@
 					<Add option="-ffunction-sections" />
 					<Add option="-O1" />
 					<Add option="-g2" />
-					<Add symbol="CAN_VOLZ" />
+					<Add symbol="DEF_RELEASE" />
+				</Compiler>
+				<Assembler>
+					<Add option="-Wa,--no-warn" />
+				</Assembler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+			<Target title="Debug JDY">
+				<Option output="bin\Debug_JDY\MultiServo_BT.elf" />
+				<Option object_output="obj\Debug_JDY\" />
+				<Option type="0" />
+				<Option compiler="armgcc_eb" />
+				<Device>
+					<Add option="$device=cortex-m0plus" />
+					<Add option="$lscript=./sys/samc21e18a_flash.ld" />
+					<Add option="$stack=0x400" />
+					<Add option="$heap=0" />
+				</Device>
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O0" />
+					<Add option="-g3" />
+					<Add symbol="DEF_JDY" />
+				</Compiler>
+				<Assembler>
+					<Add option="-Wa,--gdwarf-2" />
+				</Assembler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+			<Target title="Release JDY">
+				<Option output="bin\Release_JDY\MultiServo_BT.elf" />
+				<Option object_output="obj\Release_JDY\" />
+				<Option type="0" />
+				<Option create_hex="1" />
+				<Option compiler="armgcc_eb" />
+				<Device>
+					<Add option="$device=cortex-m0plus" />
+					<Add option="$lscript=./sys/samc21e18a_flash_boot.ld" />
+					<Add option="$stack=0x400" />
+					<Add option="$heap=0" />
+				</Device>
+				<Compiler>
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+					<Add option="-O1" />
+					<Add option="-g2" />
+					<Add symbol="DEF_RELEASE" />
+					<Add symbol="DEF_JDY" />
 				</Compiler>
 				<Assembler>
 					<Add option="-Wa,--no-warn" />
@@ -388,6 +438,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\sbus.h" />
+		<Unit filename="src\serial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\serial.h" />
 		<Unit filename="src\uavcan.h" />
 		<Unit filename="src\uavcan_v0.c">
 			<Option compilerVar="CC" />
@@ -403,6 +457,7 @@
 		<Unit filename="sys\samc21e18a_flash.ld" />
 		<Unit filename="sys\samc21e18a_flash_boot.ld">
 			<Option target="Release" />
+			<Option target="Release JDY" />
 		</Unit>
 		<Unit filename="sys\startup_samc21.c">
 			<Option compilerVar="CC" />
@@ -501,6 +556,58 @@
 					<debug_interface interface_id="OpenOCD" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="" gdb_before_conn="" gdb_after_conn="" />
 				</target_debugging_settings>
 				<target_debugging_settings target="Release" active_interface="J-link">
+					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="sys\ATSAMC21E18A.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Atmel" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="Atmel">
+							<option opt_id="ID_DEVICE" opt_value="ATSAMC21E18" />
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_SPEED" opt_value="1000" />
+							<option opt_id="ID_AUTO_SPEED" opt_value="1" />
+							<option opt_id="ID_ENDIANNESS" opt_value="little" />
+							<option opt_id="ID_RESET_TYPE" opt_value="0" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x00000000" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_FLASH_DOWNLOAD" opt_value="1" />
+							<option opt_id="ID_FLASH_BREAK" opt_value="1" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="1" />
+							<option opt_id="ID_NCACHE_CHECK" opt_value="0" />
+							<option opt_id="ID_NCACHE_BASE" opt_value="" />
+							<option opt_id="ID_NCACHE_LENGTH" opt_value="" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_ARM_SWI" opt_value="" />
+							<option opt_id="ID_THUMB_SWI" opt_value="" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
+				<target_debugging_settings target="Debug JDY" active_interface="J-link">
+					<debug_interface interface_id="Generic" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="All" />
+					</debug_interface>
+					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="sys\ATSAMC21E18A.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Atmel" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="Atmel">
+							<option opt_id="ID_DEVICE" opt_value="ATSAMC21E18" />
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_SPEED" opt_value="100" />
+							<option opt_id="ID_AUTO_SPEED" opt_value="0" />
+							<option opt_id="ID_ENDIANNESS" opt_value="little" />
+							<option opt_id="ID_RESET_TYPE" opt_value="0" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x00000000" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_FLASH_DOWNLOAD" opt_value="1" />
+							<option opt_id="ID_FLASH_BREAK" opt_value="1" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="1" />
+							<option opt_id="ID_NCACHE_CHECK" opt_value="0" />
+							<option opt_id="ID_NCACHE_BASE" opt_value="" />
+							<option opt_id="ID_NCACHE_LENGTH" opt_value="" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_ARM_SWI" opt_value="" />
+							<option opt_id="ID_THUMB_SWI" opt_value="" />
+						</family_options>
+					</debug_interface>
+					<debug_interface interface_id="OpenOCD" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="" gdb_before_conn="" gdb_after_conn="" />
+				</target_debugging_settings>
+				<target_debugging_settings target="Release JDY" active_interface="J-link">
 					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="sys\ATSAMC21E18A.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Atmel" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="Atmel">
 							<option opt_id="ID_DEVICE" opt_value="ATSAMC21E18" />

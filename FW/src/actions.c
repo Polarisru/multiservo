@@ -200,6 +200,36 @@ bool ACTION_ReadParameter(uint8_t param, uint8_t *val)
   return false;
 }
 
+/** \brief Set bus ID for selected protocol
+ *
+ * \param id ID to set
+ * \return True if success
+ *
+ */
+bool ACTIONS_SetId(uint8_t id)
+{
+  switch (GLOBAL_ConnMode)
+  {
+    case CONN_MODE_PWM:
+      return false;
+    case CONN_MODE_RS485:
+      return true;
+    case CONN_MODE_CAN:
+      return CANBUS_SetId(id);
+    case CONN_MODE_AMAZON:
+      return true;
+    case CONN_MODE_UAVCAN_0:
+      return true;
+    case CONN_MODE_SBUS:
+      return true;
+      break;
+    case CONN_MODE_METEOR:
+      return true;
+    default:
+      return false;
+  }
+}
+
 /** \brief Set working mode (PWM/RS485/CAN/SBUS)
  *
  * \param [in] mode Working mode

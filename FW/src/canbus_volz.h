@@ -3,14 +3,12 @@
 
 #include "defines.h"
 
-#define CANBUS_CAN_ID             0x3E0
-
 #define CANBUS_ID_MASK            0x7FF
 #define CANBUS_BACKDOOR_ID        0x7F0
-#define CANBUS_ID_OWN_MASK        0x7F0
+#define CANBUS_ID_OWN_MASK        0x7E0
+#define CANBUS_DFLT_ID            0x3E0
 
 #define CANBUS_ID_REPLY_BIT       (1 << 4)
-
 
 #define CANBUS_BROADCAST_ID       0
 
@@ -55,17 +53,18 @@
 #define CANMSG_SIGNATURE_RESET    0x12345678
 
 /**< List of bootloader commands */
-#define FLASH_CMD_STARTBL       0x00
-#define FLASH_CMD_GOTOAPP       0x01
-#define FLASH_CMD_SENDDATA      0x02
-#define FLASH_CMD_WRITEPAGE     0x03
-#define FLASH_CMD_EEWRITE       0x04
-#define FLASH_CMD_CHECKCRC      0x05
-#define FLASH_CMD_GETINFO       0x06
+#define FLASH_CMD_STARTBL         0x00
+#define FLASH_CMD_GOTOAPP         0x01
+#define FLASH_CMD_SENDDATA        0x02
+#define FLASH_CMD_WRITEPAGE       0x03
+#define FLASH_CMD_EEWRITE         0x04
+#define FLASH_CMD_CHECKCRC        0x05
+#define FLASH_CMD_GETINFO         0x06
 
 /**< Bootloader reply */
 #define CANMSG_ANSWER_OK_SIGN     0xAA
 
+bool CANBUS_SetId(uint8_t id);
 bool CANBUS_SetPosition(float pos);
 bool CANBUS_GetPosition(float *pos);
 bool CANBUS_ReadByte(uint16_t addr, uint8_t *value);

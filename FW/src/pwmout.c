@@ -1,5 +1,6 @@
 #include "outputs.h"
 #include "pwmout.h"
+#include "serial.h"
 
 #define PWM_PORT          GPIO_PORTA
 #define PWM_PIN           0
@@ -31,6 +32,19 @@ void PWMOUT_Enable(void)
 void PWMOUT_Disable(void)
 {
   GPIO_SetFunction(PWM_PORT, PWM_PIN, GPIO_PIN_FUNC_OFF);
+  OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_OFF);
+}
+
+/** \brief Enable serial connection for PWM channel
+ *
+ * \param [in] baudrate Baudrate for serial connection
+ * \return void
+ *
+ */
+void PWMOUT_EnableUART(uint32_t baudrate)
+{
+  SERIAL_SetBaudrate(baudrate);
+  SERIAL_Enable();
   OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_OFF);
 }
 

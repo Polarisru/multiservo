@@ -3,6 +3,7 @@
 
 static uint8_t tx_buff[CANBUS_MAX_LEN];
 static uint8_t CANBUS_RxBuffer[CANBUS_MAX_LEN];
+static uint8_t CANBUS_Id = CANMSG_ID_BROADCAST;
 
 /** \brief Send CAN packet and wait for reply if needed
  *
@@ -21,7 +22,7 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
   TCanMsg rx_msg;
 
   /**< Build CAN packet here */
-  id = CANBUS_CAN_ID;
+  id = CANBUS_DFLT_ID | CANBUS_Id;
 
   while (errors < CANBUS_MAX_RETRIES)
   {
@@ -47,6 +48,21 @@ bool CANBUS_Transfer(uint8_t *tx_data, uint8_t tx_len, uint8_t *rx_data, uint8_t
   }
 
   return false;
+}
+
+/** \brief Set Id for CAN bus
+ *
+ * \param [in] id Id to set
+ * \return void
+ *
+ */
+bool CANBUS_SetId(uint8_t id)
+{
+  if (id > CANMSG_ID_MASK)
+    return false;
+  CANBUS_Id = id & CANMSG_ID_MASK;
+
+  return true;
 }
 
 /** \brief Set servo position
@@ -296,7 +312,7 @@ bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
   tx_buff[CANMSG_OFFS_DATA + 2] = 0;
   tx_buff[CANMSG_OFFS_DATA + 3] = (uint8_t)crc;
   tx_buff[CANMSG_OFFS_DATA + 4] = (uint8_t)(crc >> 8);
-  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) + sizeof(uint16_t) * 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
+  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint16_t) * 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
   return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
@@ -314,7 +330,7 @@ bool CANBUS_WritePage(uint8_t page)
   tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_WRITEPAGE;
   tx_buff[CANMSG_OFFS_DATA + 1] = (uint8_t)page;
   tx_buff[CANMSG_OFFS_DATA + 2] = 0;
-  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) + sizeof(uint16_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
+  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint16_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
   return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
@@ -333,7 +349,7 @@ bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data)
   tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_SENDDATA;
   tx_buff[CANMSG_OFFS_DATA + 1] = pos;
   memcpy(&tx_buff[CANMSG_OFFS_DATA + 1], data, sizeof(uint32_t));
-  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
+  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 3 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
   return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);

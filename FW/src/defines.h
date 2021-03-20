@@ -84,8 +84,6 @@ enum {
 #define OPTIONS_TERMINATION_ON  (1 << 0)
 #define OPTIONS_REVERSE_ON      (1 << 1)
 
-#define CANBUS_DFLT_ID          0x3F0
-
 #define EG_BIT_RS485_RX         (1 << 0)
 #define EG_BIT_CAN_RX           (1 << 1)
 
