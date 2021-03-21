@@ -113,13 +113,25 @@ void RS232_DisableRxInt(void)
 /** \brief Receive data from RS232 to buffer
  *
  * \param [out] data Pointer to data buffer
- * \param [in] size Length of data
+ * \param [in] len Length of data
  * \param [in] timeout Timeout in ms
  * \return True if succeed
  *
  */
-bool UART_Receive(uint8_t *data, uint16_t size, uint16_t timeout)
+bool RS232_Receive(uint8_t *data, uint16_t len, uint16_t timeout)
 {
+  uint32_t ticks = xTaskGetTickCount() + timeout;
+
+  while (len > 0)
+  {
+    if (UART_HaveData(RS232_CHANNEL) == true)
+    {
+      *data++ = UART_GetByte(RS232_CHANNEL);
+      len--;
+    }
+    if (xTaskGetTickCount() > ticks)
+      return false;
+  }
   return true;
 }
 

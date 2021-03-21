@@ -14,7 +14,7 @@ float CONVERSION_GetVoltage(void)
 {
   float voltage;
 
-  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_FB, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
+  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_FB) * ADC_REF_VOLTAGE * 2 / ADC_MAX_VALUE;
 
   return voltage;
 
@@ -41,7 +41,7 @@ float CONVERSION_GetSupplyVoltage(void)
 {
   float voltage;
 
-  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_U, ADC_TYPE_CURRENT) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv/ ADC_MAX_VALUE;
+  voltage = (float)ANALOG_GetValueADC0(ADC_CHANNEL_U) * ADC_REF_VOLTAGE * EE_VoltSupplyDiv/ ADC_MAX_VALUE;
 
   return voltage;
 }

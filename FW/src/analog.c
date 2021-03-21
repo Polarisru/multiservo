@@ -18,7 +18,7 @@ const TAnalogChannel ANALOG_Channels[ADC_CHANNEL_NUM] = {
   {GPIO_PORTA, 9, MUX_PA09B_ADC1_AIN11, ADC_INPUTCTRL_MUXPOS_AIN11_Val}
 };
 
-uint16_t ANALOG_GetValueADC0(uint8_t channel, uint8_t type)
+uint16_t ANALOG_GetValueADC0(uint8_t channel)
 {
   ADC_SetChannel(ADC0, ANALOG_Channels[channel].channel);
   while (ADC_IsReady(ADC0) == false);
@@ -48,7 +48,7 @@ bool ANALOG_GetBuff(uint32_t num, uint8_t *data)
   return true;
 }
 
-void ANALOG_FillFftBuff(uint8_t *data, uint16_t len)
+void ANALOG_FillFftBuff(int8_t *data, uint16_t len)
 {
   memcpy(data, &ANALOG_Buff[(ANALOG_BUFF_LEN - len) / 2], len);
 }

@@ -275,7 +275,7 @@ bool CANBUS_StartBL(void)
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Go to application
@@ -315,7 +315,7 @@ bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint16_t) * 2, CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Write one page to Flash
@@ -333,7 +333,7 @@ bool CANBUS_WritePage(uint8_t page)
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint16_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1] == CANMSG_ANSWER_OK_SIGN);
 }
 
 /** \brief Write data to memory buffer of the bootloader
@@ -352,5 +352,5 @@ bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data)
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 3 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 
-  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA] == CANMSG_ANSWER_OK_SIGN);
+  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1] == CANMSG_ANSWER_OK_SIGN);
 }

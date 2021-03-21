@@ -1,7 +1,7 @@
 #include "drivers.h"
 #include "actions.h"
 #include "analog.h"
-//#include "bootloader.h"
+#include "bootloader.h"
 #include "canbus.h"
 #include "conversion.h"
 #include "eeprom.h"
@@ -14,7 +14,7 @@
 #include "version.h"
 
 #define ADC_SAMPLES   256
-uint8_t fft_data[ADC_SAMPLES];
+int8_t fft_data[ADC_SAMPLES];
 int8_t im[ADC_SAMPLES];
 
 
@@ -540,7 +540,7 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
         if (intVal0 == ADC_CHANNEL_I)
           sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValueADC1((uint8_t)intVal0, ADC_TYPE_CURRENT));
         else
-          sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValueADC0((uint8_t)intVal0, ADC_TYPE_CURRENT));
+          sprintf(buff, PARSER_Items[index].outFmt, ANALOG_GetValueADC0((uint8_t)intVal0));
         break;
 
       case PARSER_CMD_PWR:
@@ -582,15 +582,15 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
 
       case PARSER_CMD_BLS:
         /**< Start bootloader */
-//        if (BOOTLOADER_Start() == true)
-//          errMsg = parserOk;
-//        else
-//          errMsg = parserErrHw;
+        if (BOOTLOADER_Start() == true)
+          errMsg = parserOk;
+        else
+          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLQ:
         /**< Quit bootloader */
-        //BOOTLOADER_Stop();
+        BOOTLOADER_Stop();
         errMsg = parserOk;
         break;
 
@@ -601,10 +601,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-//        if (BOOTLOADER_WriteFlash((uint8_t)intVal0, false) == true)
-//          errMsg = parserOk;
-//        else
-//          errMsg = parserErrHw;
+        if (BOOTLOADER_WriteFlash((uint8_t)intVal0, false) == true)
+          errMsg = parserOk;
+        else
+          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLC:
@@ -614,10 +614,10 @@ void PARSER_Process(char *cmd, char *buff, uint8_t source)
           errMsg = parserErrParam;
           break;
         }
-//        if (BOOTLOADER_CheckCRC((uint8_t)intVal0, (uint16_t)intVal1) == true)
-//          errMsg = parserOk;
-//        else
-//          errMsg = parserErrHw;
+        if (BOOTLOADER_CheckCRC((uint8_t)intVal0, (uint16_t)intVal1) == true)
+          errMsg = parserOk;
+        else
+          errMsg = parserErrHw;
         break;
 
       case PARSER_CMD_BLE:

@@ -116,6 +116,13 @@ void BOOTLOADER_Stop(void)
   OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_OFF);
 }
 
+/** \brief Check CRC for one page
+ *
+ * \param [in] page Page number
+ * \param [in] crc Right CRC16 value
+ * \return True if CRC check was successful
+ *
+ */
 bool BOOTLOADER_CheckCRC(uint8_t page, uint16_t crc)
 {
   uint8_t tx_data[4];
@@ -258,7 +265,7 @@ bool BOOTLOADER_WriteFlash(uint8_t page, bool secured)
   /**< Should receive more data here, disable UART interrupt to get binary stream */
   RS232_DisableRxInt();
   /**< Get binary stream (256 bytes) */
-  if (UART_Receive(BL_buffer, BL_PAGE_SIZE, 300) == false)
+  if (RS232_Receive(BL_buffer, BL_PAGE_SIZE, 300) == false)
   {
     /**< Enable UART interrupt */
     RS232_EnableRxInt();
@@ -329,7 +336,7 @@ bool BOOTLOADER_WriteFlash(uint8_t page, bool secured)
         while (counter < BL_PAGE_SIZE / 2)
         {
           RS485_Send(&BL_buffer[counter], 8);
-          while (RS485_TxComplete() == false);
+          //while (RS485_TxComplete() == false);
           counter += 8;
         }
         if ((RS485_Receive(rx_data, 2, 100) == false) || (rx_data[0] != BL_ANS_OK) || (rx_data[1] != BL_ANS_OK))
@@ -346,7 +353,7 @@ bool BOOTLOADER_WriteFlash(uint8_t page, bool secured)
         while (counter < BL_PAGE_SIZE)
         {
           RS485_Send(&BL_buffer[counter], 8);
-          while (RS485_TxComplete() == false);
+          //while (RS485_TxComplete() == false);
           counter += 8;
         }
         if ((RS485_Receive(rx_data, 2, 100) == false) || (rx_data[0] != BL_ANS_OK) || (rx_data[1] != BL_ANS_OK))
