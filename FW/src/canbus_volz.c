@@ -348,7 +348,7 @@ bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data)
   tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
   tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_SENDDATA;
   tx_buff[CANMSG_OFFS_DATA + 1] = pos;
-  memcpy(&tx_buff[CANMSG_OFFS_DATA + 1], data, sizeof(uint32_t));
+  memcpy(&tx_buff[CANMSG_OFFS_DATA + 2], data, sizeof(uint32_t));
   if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 3 + sizeof(uint32_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
     return false;
 

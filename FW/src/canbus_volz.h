@@ -60,6 +60,7 @@
 #define FLASH_CMD_EEWRITE         0x04
 #define FLASH_CMD_CHECKCRC        0x05
 #define FLASH_CMD_GETINFO         0x06
+#define FLASH_CMD_WRITERAWPAGE    0x07
 
 /**< Bootloader reply */
 #define CANMSG_ANSWER_OK_SIGN     0xAA
