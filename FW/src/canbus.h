@@ -8,7 +8,7 @@
 #define CANBUS_MAX_LEN            32
 
 /**< CAN reply timeout in ms */
-#define CANBUS_TIMEOUT            10
+#define CANBUS_TIMEOUT            20
 
 typedef struct
 {

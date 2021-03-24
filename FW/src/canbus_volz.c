@@ -327,6 +327,24 @@ bool CANBUS_CheckCRC(uint8_t page, uint16_t crc)
 bool CANBUS_WritePage(uint8_t page)
 {
   tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_WRITERAWPAGE;
+  tx_buff[CANMSG_OFFS_DATA + 1] = (uint8_t)page;
+  tx_buff[CANMSG_OFFS_DATA + 2] = 0;
+  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint16_t), CANBUS_RxBuffer, CANBUS_TIMEOUT) == false)
+    return false;
+
+  return (CANBUS_RxBuffer[CANMSG_OFFS_DATA + 1] == CANMSG_ANSWER_OK_SIGN);
+}
+
+/** \brief Write one encrypted page to Flash
+ *
+ * \param [in] page Page number
+ * \return True if succeed
+ *
+ */
+bool CANBUS_WriteEncPage(uint8_t page)
+{
+  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
   tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_WRITEPAGE;
   tx_buff[CANMSG_OFFS_DATA + 1] = (uint8_t)page;
   tx_buff[CANMSG_OFFS_DATA + 2] = 0;

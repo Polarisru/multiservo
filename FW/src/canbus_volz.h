@@ -78,6 +78,7 @@ bool CANBUS_StartBL(void);
 bool CANBUS_GoToApp(void);
 bool CANBUS_CheckCRC(uint8_t page, uint16_t crc);
 bool CANBUS_WritePage(uint8_t page);
+bool CANBUS_WriteEncPage(uint8_t page);
 bool CANBUS_WriteToBuff(uint8_t pos, uint32_t *data);
 
 #endif
