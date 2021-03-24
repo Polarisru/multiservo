@@ -370,11 +370,15 @@ bool BOOTLOADER_WriteFlash(uint8_t page, bool secured)
       {
         vTaskDelay(1);
         counter = 0;
-        while (counter < BL_PAGE_SIZE)
+        while ((counter < BL_PAGE_SIZE) && (i++ < BL_PWM_RETRY))
         {
-          CANBUS_WriteToBuff((uint8_t)counter, (uint32_t*)&BL_buffer[counter]);
+          if (CANBUS_WriteToBuff((uint8_t)counter, (uint32_t*)&BL_buffer[counter]) == false)
+            continue;
+          i = 0;
           counter += sizeof(uint32_t);
         }
+        if (i >= BL_PWM_RETRY)
+          break;
         vTaskDelay(1);
         if (secured == true)
         {
