@@ -56,21 +56,22 @@ bool BOOTLOADER_Start(void)
       return false;
     case CONN_MODE_RS485:
       /**< Connect servo again */
-      OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
       RS485_DisableRxInt();
       RS485_SetBaudrate(BL_UART_BAUDRATE);
+      OUTPUTS_Switch(OUTPUTS_SERVO, OUTPUTS_SWITCH_ON);
       for (i = 0; i < BL_PWM_RESYNCS; i++)
       {
+        vTaskDelay(1);
+        memset(data, 0, 2);
         /**< Send sync packet (8 bytes) */
         RS485_Send(BL_SyncroPWM, 8);
         /**< Wait for answer from servo */
-        if ((RS485_Receive(data, 2, 10) == true) && (data[0] == BL_ANS_SYNC1) && (data[1] == BL_ANS_SYNC2))
+        if ((RS485_Receive(data, 2, 15) == true) && (data[0] == BL_ANS_SYNC1) && (data[1] == BL_ANS_SYNC2))
           break;
-        vTaskDelay(1);
       }
       if (i < BL_PWM_RESYNCS)
         return true;
-      RS485_SetBaudrate(BL_RS485_BAUDRATE);
+      RS485_SetBaudrate(GLOBAL_Baudrate);
       RS485_EnableRxInt();
       return false;
     case CONN_MODE_CAN:

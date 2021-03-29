@@ -101,7 +101,7 @@ void RS485_EnableRxInt(void)
  */
 void RS485_DisableRxInt(void)
 {
-  RS485_CHANNEL->USART.INTENSET.reg = 0;
+  RS485_CHANNEL->USART.INTENCLR.reg = SERCOM_USART_INTFLAG_RXC;
 }
 
 /** \brief Send data packet via RS485 bus
@@ -133,12 +133,16 @@ void RS485_Send(uint8_t *data, uint8_t len)
  */
 bool RS485_Receive(uint8_t *data, uint16_t len, uint16_t timeout)
 {
-  uint32_t ticks = xTaskGetTickCount();
+  uint32_t ticks = xTaskGetTickCount() + timeout;
 
   while (len--)
   {
     /**< Wait until the data is ready to be received */
-    while ((RS485_CHANNEL->USART.INTFLAG.bit.RXC == 0) && ((xTaskGetTickCount() - ticks) < timeout));
+    while (RS485_CHANNEL->USART.INTFLAG.bit.RXC == 0)
+    {
+      if (xTaskGetTickCount() > ticks)
+        return false;
+    }
     /**< Read RX data, combine with DR mask */
     *data++ = (uint8_t)(RS485_CHANNEL->USART.DATA.reg & 0xFF);
   }

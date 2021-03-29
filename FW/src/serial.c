@@ -26,6 +26,7 @@ void SERIAL_Enable(void)
   /**< Setup TX/RX pins */
   GPIO_SetFunction(SERIAL_PORT, SERIAL_PIN_TX, SERIAL_PINMUX_TX);
   GPIO_SetFunction(SERIAL_PORT, SERIAL_PIN_RX, SERIAL_PINMUX_RX);
+  OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_ON);
 }
 
 /** \brief Disable serial connection
@@ -38,6 +39,7 @@ void SERIAL_Disable(void)
   /**< Disable pins */
   GPIO_SetFunction(SERIAL_PORT, SERIAL_PIN_TX, GPIO_PIN_FUNC_OFF);
   GPIO_SetFunction(SERIAL_PORT, SERIAL_PIN_RX, GPIO_PIN_FUNC_OFF);
+  OUTPUTS_Switch(OUTPUTS_SBUSPOL, OUTPUTS_SWITCH_OFF);
 }
 
 /** \brief Set baudrate for serial connection
@@ -60,8 +62,12 @@ void SERIAL_SetBaudrate(uint32_t baudrate)
  */
 void SERIAL_Send(uint8_t *data, uint16_t len)
 {
+  SERIAL_CHANNEL->USART.CTRLB.bit.RXEN = 0;
+  OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_ON);
   while (len--)
-    UART_SendByte(SERIAL_PORT, *data++);
+    UART_SendByte(SERIAL_CHANNEL, *data++);
+  OUTPUTS_Switch(OUTPUTS_SBUSTE, OUTPUTS_SWITCH_OFF);
+  SERIAL_CHANNEL->USART.CTRLB.bit.RXEN = 1;
 }
 
 /** \brief Receive data from serial channel
@@ -78,9 +84,9 @@ bool SERIAL_Receive(uint8_t *data, uint16_t len, uint16_t timeout)
 
   while (len > 0)
   {
-    if (UART_HaveData(SERIAL_PORT) == true)
+    if (UART_HaveData(SERIAL_CHANNEL) == true)
     {
-      *data++ = UART_GetByte(SERIAL_PORT);
+      *data++ = UART_GetByte(SERIAL_CHANNEL);
       len--;
     }
     if (xTaskGetTickCount() > ticks)
