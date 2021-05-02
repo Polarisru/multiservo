@@ -46,6 +46,10 @@
 #define CAN_CMD_RESETBITS     48
 #define CAN_CMD_TRANSIT       50
 #define CAN_CMD_STARTBL       56
+#define CAN_CMD_GOTOAPP       57
+
+#define CANMSG_SIGNATURE_START    0xAA55A55A
+#define CANMSG_SIGNATURE_RESET    0x12345678
 
 typedef struct
 {
@@ -71,5 +75,7 @@ bool CANBUS_SetPositionMeteor(float pos);
 bool CANBUS_GetPositionMeteor(float *pos);
 bool CANBUS_ReadByteMeteor(uint16_t addr, uint8_t *value);
 bool CANBUS_WriteByteMeteor(uint16_t addr, uint8_t value);
+bool CANBUS_StartBLMeteor(void);
+bool CANBUS_GoToAppMeteor(void);
 
 #endif

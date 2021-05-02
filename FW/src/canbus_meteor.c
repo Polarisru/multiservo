@@ -188,3 +188,42 @@ bool CANBUS_WriteByteMeteor(uint16_t addr, uint8_t value)
 
   return (rx_buff[1] == value);
 }
+
+/** \brief Just send bootloader starting command
+ *
+ * \return True if succeed
+ *
+ */
+bool CANBUS_StartBLMeteor(void)
+{
+  uint32_t uval32;
+
+  id = CANBUS_BuildRequestID(CAN_CMD_STARTBL);
+
+  uval32 = CANMSG_SIGNATURE_START;
+  tx_buff[0] = 0;
+  memcpy(&tx_buff[1], &uval32, sizeof(uint32_t));
+  if (CANBUS_Transfer(id, tx_buff, sizeof(uint8_t) * 1 + sizeof(uint32_t), rx_buff, CANBUS_TIMEOUT) == false)
+    return false;
+
+  return true;
+}
+
+/** \brief Go to application
+ *
+ * \return True if succeed
+ *
+ */
+bool CANBUS_GoToAppMeteor(void)
+{
+  uint32_t uval32;
+
+  tx_buff[CANMSG_OFFS_CMD] = CANMSG_CMD_BOOTLOADER;
+  tx_buff[CANMSG_OFFS_DATA] = FLASH_CMD_GOTOAPP;
+  uval32 = CANMSG_SIGNATURE_RESET;
+  memcpy(&tx_buff[CANMSG_OFFS_DATA + 1], &uval32, sizeof(uint32_t));
+  if (CANBUS_Transfer(tx_buff, sizeof(uint8_t) * 2 + sizeof(uint32_t), NULL, 0) == false)
+    return false;
+
+  return true;
+}
